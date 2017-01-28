@@ -1,0 +1,7 @@
+# Note on vcf merging and processing: 
+#we can potentially use vcfanno for quick annotation of vcfs on ExAC vs. TCGA frequencies and such
+https://genomebiology.biomedcentral.com/articles/10.1186/s13059-016-0973-5
+https://github.com/brentp/vcfanno/tree/master/docs/examples/exac_combine
+
+
+
