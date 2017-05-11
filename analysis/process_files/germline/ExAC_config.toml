@@ -1,0 +1,11 @@
+[[postannotation]]
+fields=["ExAC_AC_Adj", "ExAC_AN_Adj"]
+name="ExAC_AF_Adj"
+op="div2"
+type="Float"
+
+[[annotation]]
+file="/Users/khuang/Box Sync/PhD/germline/ExAC/ExAC.r1.sites.vep.vcf.gz"
+fields=["AC_Adj","AN_Adj"]
+ops=["self","self"]
+names=["ExAC_AC_Adj","ExAC_AN_Adj"]
