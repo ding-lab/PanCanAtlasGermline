@@ -102,7 +102,11 @@ WORKDIR /data/
 
 ##### vcfanno: http://brentp.github.io/vcfanno/#installation #####
 
-RUN conda install -c bioconda vcfanno
+#RUN conda install -c bioconda vcfanno
+
+RUN wget https://github.com/brentp/vcfanno/releases/download/v0.2.6/vcfanno_linux64 && \
+	cp vcfanno_linux64 /usr/local/bin/vcfanno_linux64 && \
+	rm vcfanno_linux64
 
 ##### vcflib: https://hub.docker.com/r/itsjeffreyy/vcflib/~/dockerfile/ #####
 # Base image ubuntu:16.04
