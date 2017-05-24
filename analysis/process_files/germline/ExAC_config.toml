@@ -5,7 +5,8 @@ op="div2"
 type="Float"
 
 [[annotation]]
-file="/Users/khuang/Box Sync/PhD/germline/ExAC/ExAC.r1.sites.vep.vcf.gz"
+#file="/Users/khuang/Box Sync/PhD/germline/ExAC/ExAC.r1.sites.vep.vcf.gz"
+file="ExAC_nonTCGA.r0.3.1.sites.vep.vcf.gz"
 fields=["AC_Adj","AN_Adj"]
 ops=["self","self"]
 names=["ExAC_AC_Adj","ExAC_AN_Adj"]
