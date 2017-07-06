@@ -1,39 +1,3 @@
-# ### on a vCPU ###
-# # copy file from storage
-# gsutil cp gs://dinglab/isb-cgc/tcga/genotyping/tarballs/genotyping.ACC.tar .
-
-# tar -xvf genotyping.ACC.tar
-
-# # merge vcf
-# vcf-merge $(ls -1 *.vcf.gz | perl -pe 's/\n/ /g') | bgzip -c > ACC.merge.vcf.gz
-
-# tabix -p vcf  ACC.merge.vcf.gz
-
-# #upload
-# gsutil cp ACC.merged.vcf.gz* gs://dinglab/isb-cgc/tcga/genotyping/merge
-
-# ### on a big vCPU ###
-# # do it sequencially so the space usage is fine
-# files="$(gstuil ls gs://dinglab/isb-cgc/tcga/genotyping/tarballs/*)"
-# for file in gsutil ls gs://dinglab/isb-cgc/tcga/genotyping/tarballs/*; do
-# 	cancer=${file}
-# 	echo $cancer
-# done
-
-# gsutil cp gs://dinglab/isb-cgc/tcga/genotyping/tarballs/* .
-
-# for file in *; do 
-# 	tar -xvf $file -C ${file}"dir"
-# done
-
-# for dir in *; do
-# 	cancer=${dir}
-# 	vcf-merge $(ls -1 ${dir}*.vcf.gz | perl -pe 's/\n/ /g') | bgzip -c > ACC.merge.vcf.gz
-# done
-
-# 2 vCPU; 60GiB <- not enough RAM
-# 8vCPU; 52GiB mem, 60GiB
-
 # do cancer type by cancer type to avoid file size
 $ cat cancer_type.txt 
 ACC
