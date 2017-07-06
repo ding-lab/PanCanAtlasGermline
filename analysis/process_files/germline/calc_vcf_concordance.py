@@ -119,128 +119,212 @@ def evaluate(submission, truth, sampleMatch=False):
     truvcfh = vcf.Reader(filename=truth)
     truWtCount = 0
 
-    tpcount = 0 
-    fpcount = 0 
-    tncount = 0
-    fncount = 0
+    tpcount = 0 # counts TPs that are not masked
+    fpcount = 0 # counts FPs that not masked
 
+    tpcountmasked = 0 # counts masked TPs
+    fpcountmasked = 0 # counts masked FPs
     trurecs = 0
-    subrecs = 0 # counts all predicted variants
 
-    truGeno = autovivification()
-    subGeno = autovivification()
+    subrecs = 0 # counts all predicted variant records
+    subuncount = 0 # counts predicted variant records that are not counted as TPs/FPs
+    trunotmasked = 0 # counts true variants that are not masked
+
+    truGeno = {}
 
     ''' store list of truth records, otherwise the iterator needs to be reset '''
-    
-    subSample = subvcfh.samples[0][5:16]
-    truSample = "none"
-    for sample in truvcfh.samples:
-        if subSample in sample:
-            print "Sample matched! Submission sample: " + subvcfh.samples[0] + " Genotype sample: " + sample
-            truSample = sample
-    if truSample == "none":
-        sys.exit('No matched sample in genotype file.')
-
     for trurec in truvcfh:
-        var = str(trurec.CHROM) + ":" + str(trurec.POS) + ":" + str(trurec.REF)
-        alt = str(trurec.ALT)
+        var = str(trurec.CHROM) + ":" + str(trurec.POS) + ":" + trurec.REF
+        alt = trurec.ALT
         #print var
 
-        genotype = format(trurec.genotype(truSample)['GT'])
-        truGeno[var][alt] = genotype
-        trurecs += 1
-
-        # for sample in trurec.samples:
-        #     if sample in # check sample match 
-        #     genotype = format(sample['GT'])
-        #     #print genotype
-        #     truGeno[var][alt] = genotype
-        #     trurecs += 1
-    
-    for subrec in subvcfh:
-        var = str(subrec.CHROM) + ":" + str(subrec.POS) + ":" + str(subrec.REF) 
-        alt = str(subrec.ALT)
-        #print var
-
-        for sample in subrec.samples:
+        for sample in trurec.samples:
             genotype = format(sample['GT'])
             #print genotype
-            subGeno[var][alt] = genotype
-            subrecs += 1
-
-    for var in truGeno:
+            truGeno[var][alt] = genotype
+            ++trurecs 
+            #print var + ":" + str(genotype)
+            if genotype == "0/0": #WT
+                ++truWtCount
+    
+    for subrec in subvcfh:
+        var = str(subrec.CHROM) + ":" + str(subrec.POS) + ":" + subrec.REF 
+        alt = subrec.ALT
         #print var
-        for alt in truGeno[var]:
-            genotype = truGeno[var][alt]
+
+        for sample in trurec.samples:
+            genotype = format(sample['GT'])
+            if alt in truGeno[var]:
+                truGenotype = truGeno[var][alt]
+                if genotype == truGenotype:
+                    ++tpcount
+                else:
+                    ++fpcount
+
+        else: 
             #print genotype
-            if genotype == "0/0":
-                if var in subGeno:
-                    if alt in subGeno[var]:
-                        if subGeno[var][alt] == genotype:
-                            tncount += 1
-                        else:
-                            fpcount += 1
-                    else: 
-                        fpcount += 1
-                else:
-                    tncount += 1
-
-            elif (genotype == "0/1") or (genotype == "1/0") or (genotype == "1/1"):
-                if var in subGeno:
-                    if alt in subGeno[var]:
-                        tpcount += 1
-                        #if subGeno[var][alt] == genotype:
-                else:
-                    fncount += 1
-
-    print "# of variants in genotype file: " + str(trurecs)
-    print "# of variants in variant file: " + str(subrecs)
-
-    print "TP: " + str(tpcount)
-    print "TN: " + str(tncount)
-    print "FP: " + str(fpcount)
-    print "FN: " + str(fncount)
+            truGeno[var] = genotype
+            ++trurecs 
+    # trulist = [trurec for trurec in truvcfh]
     
-    result = { 'tp' : float(tpcount),
-               'fp' : float(fpcount),
-               'tn' : float(tncount),
-               'fn' : float(fncount),
-               'sample' : str(subSample) }
-    
-    return result
+#     ''' track whether the truth uses the "chr" prefix (all truth entries are assumed to use the same reference) '''
+#     usechr = trulist[0].CHROM.startswith('chr')
+
+#     ''' count records in truth vcf, track contigs/chromosomes '''
+#     for trurec in trulist:
+#         # check whether these record have concordant genotypes in the evaluated VCF
 
 
-def stats(result):
-    ''' calculate precision, recall, fscore  from result dictionary '''
-    assert 'tp' in result and 'fp' in result and 'fn' in result and 'tn' in result and 'sample' in result, "invalid result dictionary!"
-    sample = result['sample']
 
-    sensitivity = float(1)
-    if result['tp'] + result['fp'] > 0:
-        sensitivity = result['tp'] / (result['tp'] + result['fp'])
+#         if relevant(trurec, vtype, ignorechroms):
+#             truchroms[trurec.CHROM] = True
+#             if not mask(trurec, truvcfh, truchroms, active=truthmask):
+#                 trunotmasked += 1
     
-    specificity = float(1)
-    if result['tn'] + result['fp'] > 0:
-        specificity = result['tn'] / (result['tn'] + result['fp'])
+#     # sanity check
+#     if trunotmasked == 0:
+#         raise Exception("No unmasked records found in truth file!\n")
 
-    recall = float(1)
-    if result['tp'] + result['fn'] > 0:
-        recall = result['tp'] / (result['tp'] + result['fn'])
+
+#     '''
+#     keep track of 'truth' sites used, they should only be usable once
+#     if toCount=True, the true variant will be counted; if False, it will not
+#     '''
+#     used_truth = {}
     
-    precision = float(1)
-    if result['tp'] + result['fp'] > 0:
-        precision = result['tp'] / (result['tp'] + result['fp'])
+#     '''
+#     if submitters use MATEID in their BND calls we can 'tie' them together,
+#     indexed by one mate, contains info on other mate in pair
+#     '''
+#     used_bnd_mates = {}
+
+#     ''' parse submission vcf, compare to truth '''
+#     for subrec in subvcfh:
+#         subrec = prefix(subrec, usechr)
+#         if relevant(subrec, vtype, ignorechroms) and passfilter(subrec):
+#             subrecs += 1
+            
+#             matched = 'UN'
+
+#             startpos, endpos = subrec.start, subrec.end
+
+#             if vtype == 'SV' and subrec.is_sv:
+#                 startpos, endpos = expand_sv_ends(subrec, useCIs=False)
+            
+#             sub_is_masked = mask(subrec, truvcfh, truchroms, active=truthmask)
+            
+#             if subrec.CHROM in truchroms:
+#                 truoverlaplist = [trurec for trurec in truvcfh.fetch(subrec.CHROM, startpos, end=endpos)]
+#                 for trurec in truoverlaplist:
+#                     if relevant(trurec, vtype, ignorechroms) and match(subrec, trurec, vtype=vtype):
+#                         # subrec matches a true variant
+#                         tru_is_masked = mask(trurec, truvcfh, truchroms, active=truthmask)
+                        
+#                         if not sub_is_masked and not tru_is_masked:
+#                             if str(trurec) not in used_truth and matched == 'TP':
+#                                 # subrec already matches another true variant
+#                                 used_truth[str(trurec)] = { 'toCount': False, 'masked': tru_is_masked }
+                            
+#                             elif matched != 'TP' and (str(trurec) not in used_truth or not used_truth[str(trurec)]['toCount']):
+#                                 # subrec matches an unused true variant
+#                                 matched = 'TP'
+#                                 used_truth[str(trurec)] = { 'toCount': True, 'masked': tru_is_masked }
+                        
+#                         elif str(trurec) not in used_truth:
+#                             # subrec matches an unused true variant but at least one is masked
+#                             used_truth[str(trurec)] = { 'toCount': False, 'masked': tru_is_masked }
+            
+#                         if matched != 'TP':
+#                             '''
+#                             matched a true variant that was already counted
+#                             and/or has a different mask status/both are masked
+#                             only note if a true variant wasn't already IDed for subrec
+#                             '''
+#                             matched = 'T'
+
+#             if matched == 'TP' or matched == 'T':
+#                 if subrec.ID in used_bnd_mates and not used_bnd_mates[subrec.ID]['positive']:
+#                     # BND mate call was a false positive, remove conflict
+#                     if used_bnd_mates[subrec.ID]['masked']:
+#                         fpcountmasked -= 1
+#                     else:
+#                         fpcount -= 1
+#                     subuncount += 1
+                
+#                 elif subrec.INFO.get('MATEID'):
+#                     # keep track of the mate info
+#                     if isinstance(subrec.INFO.get('MATEID'), list):
+#                         mateID = subrec.INFO.get('MATEID')[0]
+#                     else:
+#                         mateID = subrec.INFO.get('MATEID')
+#                     used_bnd_mates[mateID] = { 'positive': True, 'masked': sub_is_masked }
+            
+#             elif matched == 'UN' and subrec.ID not in used_bnd_mates:
+#                 # subrec does not match a true variant and it is not tied to a previous match through a mate
+#                 matched = 'FP'
+                
+#                 if sub_is_masked:
+#                     fpcountmasked += 1
+#                 else:
+#                     fpcount += 1
+                    
+#                 if subrec.INFO.get('MATEID'):
+#                     # keep track of the mate info
+#                     if isinstance(subrec.INFO.get('MATEID'), list):
+#                         mateID = subrec.INFO.get('MATEID')[0]
+#                     else:
+#                         mateID = subrec.INFO.get('MATEID')
+#                     used_bnd_mates[mateID] = { 'positive': False, 'masked': sub_is_masked }
+                
+#             if matched == 'TP':
+#                 if sub_is_masked:
+#                     tpcountmasked += 1
+#                 else:
+#                     tpcount += 1
+#             elif matched == 'UN' or matched == 'T':
+#                 subuncount += 1
+
+#     # sanity checks
+#     assert (tpcount + fpcount + tpcountmasked + fpcountmasked + subuncount == subrecs)
     
-    fscore = float(0)
-    if precision > 0 or recall > 0:
-        fscore = 2*((precision*recall) / (precision+recall))
+#     if subrecs == 0:
+#         raise Exception("No filter-passing variants in submission! Are you sure you selected the correct variant type (SNV/INDEL/SV)?\n")
+
+#     # count the true variants that should not be counted as TPs/FNs
+#     truuncountnotmasked = 0
+#     for k, v in used_truth.iteritems():
+#         if not v['toCount'] and not v['masked']:
+#             truuncountnotmasked += 1
     
-    return sample, sensitivity, specificity, recall, precision, fscore
+#     result = { 'tp' : float(tpcount),
+#                'fp' : float(fpcount),
+#                'fn' : float(trunotmasked - tpcount - truuncountnotmasked) }
+    
+#     return result
+
+
+# def stats(result):
+#     ''' calculate precision, recall, fscore  from result dictionary '''
+#     assert 'tp' in result and 'fp' in result and 'fn' in result, "invalid result dictionary!"
+    
+#     recall = float(1)
+#     if result['tp'] + result['fn'] > 0:
+#         recall = result['tp'] / (result['tp'] + result['fn'])
+    
+#     precision = float(1)
+#     if result['tp'] + result['fp'] > 0:
+#         precision = result['tp'] / (result['tp'] + result['fp'])
+    
+#     fscore = float(0)
+#     if precision > 0 or recall > 0:
+#         fscore = 2*((precision*recall) / (precision+recall))
+    
+#     return recall, precision, fscore
     
 
 if __name__ == '__main__':
-    if len(sys.argv) == 4:
-        subvcf, truvcf, outF = sys.argv[1:4]
+    if len(sys.argv) == 3:
+        subvcf, truvcf = sys.argv[1:3]
 
         if not subvcf.endswith('.vcf') and not subvcf.endswith('.vcf.gz'):
             sys.stderr.write("submission VCF filename does not enc in .vcf or .vcf.gz\n")
@@ -250,18 +334,12 @@ if __name__ == '__main__':
             sys.stderr.write("truth VCF does not appear to be indexed. bgzip + tabix index required.\n")
             sys.exit(1)
 
-        #print "\nCalculating rates for sample:"
+        print "\nmasked:"
         counts = evaluate(subvcf, truvcf)
         statresults = stats(counts)
-        print "sample, sensitivity, specificity, recall, precision, F1-score: " + ','.join(map(str, statresults))
-        
-        countLine = str(counts['tp']) + '\t' + str(counts['tn']) + '\t' + str(counts['fp'])+ '\t' + str(counts['fn'])
-        resultLine = '\t'.join(map(str, statresults))
-        outFH = open(outF, "a")
-        outFH.write( resultLine + '\t' + countLine)
-        outFH.write( '\n' )
-        outFH.close()
-        #print "number of counted mutations in submission: " + str(ncalls)
+        ncalls  = countrecs(counts)
+        print "recall, precision, F1-score: " + ','.join(map(str, statresults))
+        print "number of counted mutations in submission: " + str(ncalls)
 
     else:
-        print "standalone usage for testing:", sys.argv[0], "<submission VCF> <truth VCF (tabix-indexed)> <output file>"
+        print "standalone usage for testing:", sys.argv[0], "<submission VCF> <truth VCF (tabix-indexed)>"
