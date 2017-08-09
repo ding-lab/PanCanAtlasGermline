@@ -16,9 +16,15 @@ annotated_VCF=${vcfFile/vcf.gz/annotated.vcf}
 echo "using vcfanno to annotate" ${vcfFile} "into" ${annotated_VCF}
 vcfanno ${vcfannoConfigFile} ${vcfFile} > ${annotated_VCF}
 
-filtered_VCF=${annotated_VCF/vcf/ExAC_AF.${AF_thres}.AD.${AD_thres}.vcf}
+# # note the previous versions only takes variants not appearing in ExAC due to bug in filter_VCF_AF_AD.py
+# filtered_VCF=${annotated_VCF/vcf/ExAC_AF.${AF_thres}.AD.${AD_thres}.vcf}
+# echo "filtering" ${annotated_VCF} "into" ${filtered_VCF}
+# python filter_VCF_AF_AD.py ${annotated_VCF} $AF_thres $AD_thres
+
+# now we only need variants that are rare in ExAC
+filtered_VCF=${annotated_VCF/vcf/ExAC_AF.${AF_thres}.ExAConly.AD.${AD_thres}.vcf}
 echo "filtering" ${annotated_VCF} "into" ${filtered_VCF}
-python filter_VCF_AF_AD.py ${annotated_VCF} $AF_thres $AD_thres
+python filter_VCF_AF_AD_keepExAConly.py ${annotated_VCF} $AF_thres $AD_thres
 date
 
 ### extract ROI (region of interest) ###
