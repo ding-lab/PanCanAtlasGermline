@@ -15,7 +15,8 @@ for analysisId in $(cat $analysisList) ; do
     VCFIN=prefilter.snp_indel.vcf.gz
 
     outputPath=gs://dinglab/isb-cgc/tcga/germline/production/${cancerType}/${analysisId}/combine
-    VCFOUT=${VCFIN/%vcf.gz/annotated.ExAC_AF.0.01.AD.3.ROI.vcf.gz}
+    #VCFOUT=${VCFIN/%vcf.gz/annotated.ExAC_AF.0.01.AD.3.ROI.vcf.gz}
+    VCFOUT=${VCFIN/%vcf.gz/annotated.ExAC_AF.0.01.ExAConly.AD.3.ROI.vcf.gz} # updated for the updated run with only ExAC rare
 
     logsPath=gs://dinglab/isb-cgc/tcga/germline/production/${cancerType}/${analysisId}/combine/annotate_logs
 
