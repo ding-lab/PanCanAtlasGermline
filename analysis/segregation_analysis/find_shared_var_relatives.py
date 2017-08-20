@@ -44,6 +44,7 @@ def main():
 
     # output file
     outFstring = args[0] + "." + args[1]
+    #outF = outFstring.replace("vcf","segragatingVar.tsv")
     outF = outFstring.replace("vcf.gz","segragatingVar.tsv")
     outFH = open(outF, "w")
 
@@ -51,18 +52,24 @@ def main():
     for line in relativeF:
         line=line.strip()
         F = line.split("\t")
+        #print str(len(F)) + "\n"
         if len(F)==2:
+            print "Searching for segregating variants in relative pairs: "+ F[0] + ":" + F[1] + "\n"
             relative2relative[F[0]] = F[1]
     relativeF.close()
 
 
     try:
         fn = args[1]
-        vcfF = gzip.open(fn,"r")
+        if fn.endswith(".gz"):
+            vcfF = gzip.open(fn,"r")
+        elif fn.endswith(".vcf"): 
+            vcfF = open(fn,"r")
     except IOError:
-        print("File , args[1], does not exist!")
+        print("File , args[1], does not exist or is not a valid vcf!")
 
-    print "sample1\tsample2\tsample1GENO\tsample2GENO\tCHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
+    colnames = "sample1\tsample2\tsample1GENO\tsample2GENO\tCHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT\n"
+    outFH.write(colnames)
     #read input file
     for line in vcfF:
         line=line.strip()
@@ -96,8 +103,9 @@ def main():
                 relativeGeno = F[relativeColID]
                 # print line if segragating var found! ( BOTH NOT WT )
                 if not sampleGeno.startswith("./.") and not relativeGeno.startswith("./."): 
-                    outLine = sample + "\t" + relative + "\t" + sampleGeno + "\t" + relativeGeno + F[0:9].join("\t") + "\n"
+                    outLine = sample + "\t" + relative + "\t" + sampleGeno + "\t" + relativeGeno + "\t".join(F[0:8]) + "\n"
                     outFH.write(outLine)
+                    #print outLine
                     
     
     vcfF.close()

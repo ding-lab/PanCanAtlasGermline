@@ -39,13 +39,13 @@ ggsave(file=fn, height=5, width=12, useDingbats=FALSE)
 
 rel_short_m2_same_withethni_ofinterest = rel_short_m2_same_withethni[!rel_short_m2_same_withethni$same_sample,]
 rel_short_m2_same_withethni_ofinterest = rel_short_m2_same_withethni_ofinterest[(rel_short_m2_same_withethni_ofinterest$Z2 > 0.125 & rel_short_m2_same_withethni_ofinterest$Z1 > 0.25) |
-                                         (rel_short_m2_same_withethni_ofinterest$Z1 > 0.20) ,]
+                                                                                  (rel_short_m2_same_withethni_ofinterest$Z1 > 0.20) ,]
 
 tn = paste("out/TCGA_z1_z2_relatives.tsv", sep="_")
 write.table(rel_short_m2_same_withethni_ofinterest,quote=F, sep = '\t', row.names = FALSE,file=tn)
 
 rel_short_m2_same_withethni_ofinterest2 = rel_short_m2_same_withethni_ofinterest[(rel_short_m2_same_withethni_ofinterest$Z2 > 0.125 & rel_short_m2_same_withethni_ofinterest$Z1 > 0.25) |
-                                                                                  (rel_short_m2_same_withethni_ofinterest$Z1 > 0.625) ,]
+                                                                                   (rel_short_m2_same_withethni_ofinterest$Z1 > 0.625) ,]
 #rel_short_m2_same_withethni_ofinterest2[,c("Sample1","Sample2","cancer1","cancer2")]
 tn = paste("out/TCGA_z1_z2_relatives_strict.tsv", sep="_")
 write.table(rel_short_m2_same_withethni_ofinterest2,quote=F, sep = '\t', row.names = FALSE,file=tn)
