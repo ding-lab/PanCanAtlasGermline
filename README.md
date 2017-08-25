@@ -4,12 +4,15 @@ PanCanAtlas germline working group is aimed at understanding germline variants i
 
 Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG
 Synapse: syn4602499
+Sign up for conference call here: https://docs.google.com/spreadsheets/d/11P3JmVr4XjGN1AYUS-XLW33vcj0OGk5S5V3YuBOA6j8/edit?usp=sharing
 
 Meeting call-ins:
 Toll Free Numbers:
 US & Canada: 1-866-692-3582
 Passcode: 4855885#
 Mute/Unmute: *6 
+Zoom screen share: https://bcm.zoom.us/j/881727498?pwd=lGKu4aVDTgE 
+Password: TCGA
 
 Getting started:
 1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command
