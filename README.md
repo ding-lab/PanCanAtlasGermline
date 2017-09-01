@@ -8,8 +8,20 @@ Sign up for conference call here: https://docs.google.com/spreadsheets/d/11P3JmV
 
 Meeting call-ins:
 Toll Free Numbers:
-US & Canada: 1-866-692-3582
-Passcode: 4855885#
+
+US: 877-951-7311
+UK: 0808-238-9817
+Australia: 1-800-010717
+Belgium: 0800-3-8930
+Canada: 866-845-8494
+Brazil: 0800-7610645
+Italy: 800-977-455
+Korea: 00798-14800-7797
+Switzerland: 0800-001-427
+Norway: 800-18093
+Spain:  800-300-907
+Poland: 00-800-1213476
+Passcode: 5236367 #
 Mute/Unmute: *6 
 Zoom screen share: https://bcm.zoom.us/j/881727498?pwd=lGKu4aVDTgE 
 Password: TCGA
