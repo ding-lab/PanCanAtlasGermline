@@ -28,7 +28,7 @@ Password: TCGA
 
 Getting started:
 1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command
-2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-TCGA-Contolled-Access-Data.html).
+2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html).
 3) Read this one page quick start to google cloud compute engine (https://cloud.google.com/compute/docs/quickstarts)
 4) If you want to download the data to your local computer/cluster, you need to make sure with your system administrator that the environment you plan to work on have appropriate access authority and security.
 5) Read Jay's short getting started guide (https://drive.google.com/file/d/0B0aS3CDIQ_RAd01ld0tKX3JHa00/view)
