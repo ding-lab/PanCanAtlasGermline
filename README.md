@@ -8,15 +8,27 @@ Sign up for conference call here: https://docs.google.com/spreadsheets/d/11P3JmV
 
 Meeting call-ins:
 Toll Free Numbers:
-US & Canada: 1-866-692-3582
-Passcode: 4855885#
+
+US: 877-951-7311
+UK: 0808-238-9817
+Australia: 1-800-010717
+Belgium: 0800-3-8930
+Canada: 866-845-8494
+Brazil: 0800-7610645
+Italy: 800-977-455
+Korea: 00798-14800-7797
+Switzerland: 0800-001-427
+Norway: 800-18093
+Spain:  800-300-907
+Poland: 00-800-1213476
+Passcode: 5236367 #
 Mute/Unmute: *6 
 Zoom screen share: https://bcm.zoom.us/j/881727498?pwd=lGKu4aVDTgE 
 Password: TCGA
 
 Getting started:
 1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command
-2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-TCGA-Contolled-Access-Data.html).
+2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html).
 3) Read this one page quick start to google cloud compute engine (https://cloud.google.com/compute/docs/quickstarts)
 4) If you want to download the data to your local computer/cluster, you need to make sure with your system administrator that the environment you plan to work on have appropriate access authority and security.
 5) Read Jay's short getting started guide (https://drive.google.com/file/d/0B0aS3CDIQ_RAd01ld0tKX3JHa00/view)
