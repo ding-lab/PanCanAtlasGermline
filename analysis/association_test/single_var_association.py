@@ -100,6 +100,12 @@ def main():
       # 2 ExAC.r1.nonTCGA.sites.vep.vcf.gz - Excluding TCGA cohorts (53,105 samples) 106210 nonTCGA; 15202 TCGA
       # 3 ExAC.r1.nonpsych.sites.vcf.gz - Excluding Psychiatric cohorts (45,376 samples)
 
+      # Mode over first 1 mil lines; if the variant is not present in nonTCGA vcf: for nonTCGA vcf: AN: 106210
+      # we gotta capture variants found in ExAC VCF but not nonTCGA VCF
+      # assume the largest TCGA AN if the variant is not seen in nonTCGA VCF
+        if ExAC_AN > 15204 and ExAC_nonTCGA_AN == 0:
+            ExAC_nonTCGA_AN = ExAC_AN - 15202 
+
         TCGA_AN = int(ExAC_AN) - int(ExAC_nonTCGA_AN)
         TCGA_AC = int(ExAC_AC) - int(ExAC_nonTCGA_AC)
         if TCGA_AN > 16000: # if for some reason it's missing in the nonTCGA ExAC maf; likely because of non-detection

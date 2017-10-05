@@ -24,3 +24,5 @@ bsubl -oo single_var_association.log 'python2.7 single_var_association.py VCF/Ex
 # filter out the non-rare variants; convert to tab delimited
 # may need to limit only to regions with sufficient coverage
 # Do burden test on variants with specific consequence and AF bins
+
+gzcat ExAC.r1.sites.vep.biallelic.combine.fisher.anno.v2.tsv.gz | grepList /Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/reference_files/20160713_Rahman_KJ_KH_152_gene_table_list.txt 9 > ExAC.r1.sites.vep.biallelic.combine.fisher.anno.v2.152gene.tsv
