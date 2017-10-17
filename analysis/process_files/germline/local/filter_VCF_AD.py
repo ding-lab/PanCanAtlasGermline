@@ -39,9 +39,9 @@ def main():
     except IOError:
         print("VCF file does not exist!")  
 
-    outFstring = ".AD." + str(AD_thres) + ".vcf"
-    outF = vcfFH.replace("vcf",outFstring)
-    outFH = open(outF, "w")
+    #outFstring = ".AD." + str(AD_thres) + ".vcf"
+    #outF = vcfFH.replace("vcf",outFstring)
+    #outFH = open(outF, "w")
 
     all_var = 0
     nonpass_AD_var = 0 
@@ -88,14 +88,14 @@ def main():
                 print line
 
     # filter summary
-    print "number of total variants:", all_var
-    print "number of variants failing AD filter of", AD_thres,":", nonpass_AD_var
-    print "number of total passed variants:", pass_var
+    #print "number of total variants:", all_var
+    #print "number of variants failing AD filter of", AD_thres,":", nonpass_AD_var
+    #print "number of total passed variants:", pass_var
             # if len(genotypes) == 1 & int(genotypes[0])>=AD_thres:
             #     print line
             # elif len(genotypes) == 2 & int(genotypes[1])>=AD_thres:
             #     print line
-    outFH.close()
+    #outFH.close()
 
 if __name__ == "__main__":
     main()
