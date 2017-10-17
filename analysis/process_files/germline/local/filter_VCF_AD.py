@@ -39,28 +39,25 @@ def main():
     except IOError:
         print("VCF file does not exist!")  
 
-    #outFstring = ".AD." + str(AD_thres) + ".vcf"
-    #outF = vcfFH.replace("vcf",outFstring)
-    #outFH = open(outF, "w")
-
-    all_var = 0
-    nonpass_AD_var = 0 
-    pass_var = 0 
 
     for line in vcfF:
         line=line.strip()
         # print the info lines
         if line.startswith("#"):
             print line
-            #outFH.write(line + "\n")
         else:
             F = line.split("\t")
-            all_var = all_var + 1
 
+            ref = str(F[3])
             info_f = str(F[7]).split(";")
             format_f = str(F[8]).split(":")
             geno_f = str(F[9]).split(":")
             AD_index = -1
+
+            ### reference filter
+            nonpass_ref = False
+            if ref == "N":
+                nonpass_ref = True
 
             ### AD filter
             nonpass_AD = False
@@ -75,27 +72,15 @@ def main():
                 genotypes = genotype.split(",")
                 if int(genotypes[1]) < AD_thres:
                     nonpass_AD = True
-                    nonpass_AD_var = nonpass_AD_var + 1
             # varscan calls
             else:
                 if int(genotype) < AD_thres:
                     nonpass_AD = True
-                    nonpass_AD_var = nonpass_AD_var + 1
             
-            if not nonpass_AD:
-                pass_var = pass_var + 1
+            if not nonpass_ref and not nonpass_AD:
                 #outFH.write(line + "\n")
                 print line
 
-    # filter summary
-    #print "number of total variants:", all_var
-    #print "number of variants failing AD filter of", AD_thres,":", nonpass_AD_var
-    #print "number of total passed variants:", pass_var
-            # if len(genotypes) == 1 & int(genotypes[0])>=AD_thres:
-            #     print line
-            # elif len(genotypes) == 2 & int(genotypes[1])>=AD_thres:
-            #     print line
-    #outFH.close()
 
 if __name__ == "__main__":
     main()
