@@ -23,7 +23,7 @@ cancer=$1
     # here we may need to limit to the best BAM
 
     #merge
-    ~/bin/bcftools-1.5/bcftools merge --output-type z --output ${cancer}.merge.vcf.gz $(ls -1 ${cancer}/*.vcf.gz | perl -pe 's/\n/ /g')
+    ~/bin/bcftools-1.5/bcftools merge --output-type z --output ${cancer}.merge.vcf.gz $(ls -1 ${cancer}/*.AD.5.vcf.gz | perl -pe 's/\n/ /g')
     #index
     tabix -p vcf ${cancer}.merge.vcf.gz
     #upload
