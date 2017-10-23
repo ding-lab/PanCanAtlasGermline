@@ -1,5 +1,7 @@
 #!/bin/python
-#03 February 2016 - Kuan-Lin Huang @ WashU - 
+# 2017 - Kuan-Lin Huang @ WashU -
+# some unused functions adopted from dream challenge evaluation code (see below)
+# mostly used to evaluate against genotype file
  
 import sys, os
 import getopt
@@ -21,95 +23,67 @@ class autovivification(dict):
 #!/usr/bin/env python
 
 
-'''
-Submission evaluation code for TCGA/ICGC/DREAM SMC
-Adam Ewing, ewingad@soe.ucsc.edu
-Requires PyVCF (https://github.com/jamescasbon/PyVCF)
-'''
+# '''
+# Submission evaluation code for TCGA/ICGC/DREAM SMC
+# Adam Ewing, ewingad@soe.ucsc.edu
+# Requires PyVCF (https://github.com/jamescasbon/PyVCF)
+# '''
 
-def match(subrec, trurec, vtype='SNV'):
-    assert vtype in ('SNV', 'SV', 'INDEL')
+# def match(subrec, trurec, vtype='SNV'):
+#     assert vtype in ('SNV', 'SV', 'INDEL')
 
-    if vtype == 'SNV' and subrec.is_snp and trurec.is_snp:
-        if subrec.POS == trurec.POS and subrec.REF == trurec.REF and subrec.ALT == trurec.ALT:
-            return True
+#     if vtype == 'SNV' and subrec.is_snp and trurec.is_snp:
+#         if subrec.POS == trurec.POS and subrec.REF == trurec.REF and subrec.ALT == trurec.ALT:
+#             return True
 
-    if vtype == 'INDEL' and subrec.is_indel and trurec.is_indel:
-        if subrec.POS == trurec.POS and subrec.REF == trurec.REF and subrec.ALT == trurec.ALT:
-            return True
+#     if vtype == 'INDEL' and subrec.is_indel and trurec.is_indel:
+#         if subrec.POS == trurec.POS and subrec.REF == trurec.REF and subrec.ALT == trurec.ALT:
+#             return True
 
-    if vtype == 'SV' and subrec.is_sv and trurec.is_sv:
-        trustart, truend = expand_sv_ends(trurec, useCIs=False)
-        substart, subend = expand_sv_ends(subrec, useCIs=False)
+#     if vtype == 'SV' and subrec.is_sv and trurec.is_sv:
+#         trustart, truend = expand_sv_ends(trurec, useCIs=False)
+#         substart, subend = expand_sv_ends(subrec, useCIs=False)
 
-        # check for overlap
-        if min(truend, subend) - max(trustart, substart) > 0:
-            return True
+#         # check for overlap
+#         if min(truend, subend) - max(trustart, substart) > 0:
+#             return True
 
-    return False
-
-
-def expand_sv_ends(rec, useCIs=True):
-    '''
-    assign start and end positions to SV calls
-    using conf. intervals if present and useCIs=True
-    '''
-    startpos, endpos = rec.start, rec.end
-    assert rec.is_sv
-
-    try:
-        if rec.INFO.get('END'): # sometimes this is a list, sometimes it's an int
-            if isinstance(rec.INFO.get('END'), list):
-                endpos = int(rec.INFO.get('END')[0])
-            if isinstance(rec.INFO.get('END'), int):
-                endpos = int(rec.INFO.get('END'))
-
-        if useCIs:
-            if rec.INFO.get('CIPOS'):
-                ci = map(int, rec.INFO.get('CIPOS'))
-                if ci[0] < 0:
-                    startpos += ci[0]
-
-            if rec.INFO.get('CIEND'):
-                ci = map(int, rec.INFO.get('CIEND')) 
-                if ci[0] > 0:
-                    endpos += ci[0]
-
-    except TypeError as e:
-        sys.stderr.write("error expanding sv interval: " + str(e) + " for record: " + str(rec) + "\n")
-
-    if startpos > endpos:
-        endpos, startpos = startpos, endpos
-
-    return startpos, endpos
+#     return False
 
 
-def passfilter(rec):
-    ''' Return true if a record is unfiltered or has 'PASS' in the filter field (pyvcf sets FILTER to None) '''
-    if rec.FILTER is None or rec.FILTER == '.' or not rec.FILTER:
-        return True
-    return False
+# def expand_sv_ends(rec, useCIs=True):
+#     '''
+#     assign start and end positions to SV calls
+#     using conf. intervals if present and useCIs=True
+#     '''
+#     startpos, endpos = rec.start, rec.end
+#     assert rec.is_sv
 
+#     try:
+#         if rec.INFO.get('END'): # sometimes this is a list, sometimes it's an int
+#             if isinstance(rec.INFO.get('END'), list):
+#                 endpos = int(rec.INFO.get('END')[0])
+#             if isinstance(rec.INFO.get('END'), int):
+#                 endpos = int(rec.INFO.get('END'))
 
+#         if useCIs:
+#             if rec.INFO.get('CIPOS'):
+#                 ci = map(int, rec.INFO.get('CIPOS'))
+#                 if ci[0] < 0:
+#                     startpos += ci[0]
 
-def countrecs(result):
-    ''' return number of counted mutation calls in submission '''
-    assert 'tp' in result and 'fp' in result, "invalid result dictionary!"
-    
-    ncalls = result['tp'] + result['fp']
-    
-    return ncalls
+#             if rec.INFO.get('CIEND'):
+#                 ci = map(int, rec.INFO.get('CIEND')) 
+#                 if ci[0] > 0:
+#                     endpos += ci[0]
 
+#     except TypeError as e:
+#         sys.stderr.write("error expanding sv interval: " + str(e) + " for record: " + str(rec) + "\n")
 
-def prefix(rec, usechr):
-    ''' adjust presence/absence of "chr" prefix according to whether usechr is True or False '''
-    if usechr and not rec.CHROM.startswith('chr'):
-        rec.CHROM = 'chr' + rec.CHROM
-    
-    if not usechr and rec.CHROM.startswith('chr'):
-        rec.CHROM = rec.CHROM.replace('chr', '')
-    
-    return rec
+#     if startpos > endpos:
+#         endpos, startpos = startpos, endpos
+
+#     return startpos, endpos
     
     
 def evaluate(submission, truth, sampleMatch=False):
@@ -117,209 +91,108 @@ def evaluate(submission, truth, sampleMatch=False):
 
     subvcfh = vcf.Reader(filename=submission)
     truvcfh = vcf.Reader(filename=truth)
-    truWtCount = 0
 
-    tpcount = 0 # counts TPs that are not masked
-    fpcount = 0 # counts FPs that not masked
+    outF = submission.replace("vcf.gz","validated.tsv")
+    outFH = open(outF, "w")
 
-    tpcountmasked = 0 # counts masked TPs
-    fpcountmasked = 0 # counts masked FPs
-    trurecs = 0
-
-    subrecs = 0 # counts all predicted variant records
-    subuncount = 0 # counts predicted variant records that are not counted as TPs/FPs
-    trunotmasked = 0 # counts true variants that are not masked
-
-    truGeno = {}
+    truGeno = autovivification()
+    sample_validated = {}
+    sample_unvalidated = autovivification()
+    validated = 0
+    unvalidated = 0
+    unvalidated_by_type = {}
+    mistmatch_types = ["CALLED_0/1;GENOTYPE_0/0" ,"CALLED_0/1;GENOTYPE_1/1", "CALLED_1/1;GENOTYPE_0/0","CALLED_1/1;GENOTYPE_0/1"]
 
     ''' store list of truth records, otherwise the iterator needs to be reset '''
     for trurec in truvcfh:
-        var = str(trurec.CHROM) + ":" + str(trurec.POS) + ":" + trurec.REF
-        alt = trurec.ALT
+        var = str(trurec.CHROM) + ":" + str(trurec.POS) + ":" + str(trurec.REF)
+        alt = str(trurec.ALT)
         #print var
 
         for sample in trurec.samples:
+            # get the sample name
+            called_name = (str(sample).split(' ')[0]).split('=')[1].strip(',')
+            # TCGA barcode name: may extract more down to sample?
+            sampleID = called_name[0:12]
+            #print sampleID
             genotype = format(sample['GT'])
             #print genotype
-            truGeno[var][alt] = genotype
-            ++trurecs 
-            #print var + ":" + str(genotype)
-            if genotype == "0/0": #WT
-                ++truWtCount
+            truGeno[var][alt][sampleID] = genotype
+            # ++trurecs 
+            # #print var + ":" + str(genotype)
+            # if genotype == "0/0": #WT
+            #     ++truWtCount
     
     for subrec in subvcfh:
-        var = str(subrec.CHROM) + ":" + str(subrec.POS) + ":" + subrec.REF 
-        alt = subrec.ALT
+        var = str(subrec.CHROM) + ":" + str(subrec.POS) + ":" + str(subrec.REF)
+        alt = str(subrec.ALT)
         #print var
+        if not var in truGeno:
+            continue
+        if not alt in truGeno[var]:
+            continue
 
-        for sample in trurec.samples:
+        for sample in subrec.samples:
+            called_name = (str(sample).split(' ')[0]).split('=')[1].strip(',')
+            sampleID = called_name[0:12]
+
+            if sampleID not in truGeno[var][alt]: # not in the GENOTYPE file
+                continue
+
             genotype = format(sample['GT'])
-            if alt in truGeno[var]:
-                truGenotype = truGeno[var][alt]
-                if genotype == truGenotype:
-                    ++tpcount
-                else:
-                    ++fpcount
+            if genotype == "./.": # not called in variant files we have
+                continue
 
-        else: 
-            #print genotype
-            truGeno[var] = genotype
-            ++trurecs 
-    # trulist = [trurec for trurec in truvcfh]
-    
-#     ''' track whether the truth uses the "chr" prefix (all truth entries are assumed to use the same reference) '''
-#     usechr = trulist[0].CHROM.startswith('chr')
+            truGenotype = truGeno[var][alt][sampleID]
 
-#     ''' count records in truth vcf, track contigs/chromosomes '''
-#     for trurec in trulist:
-#         # check whether these record have concordant genotypes in the evaluated VCF
-
-
-
-#         if relevant(trurec, vtype, ignorechroms):
-#             truchroms[trurec.CHROM] = True
-#             if not mask(trurec, truvcfh, truchroms, active=truthmask):
-#                 trunotmasked += 1
-    
-#     # sanity check
-#     if trunotmasked == 0:
-#         raise Exception("No unmasked records found in truth file!\n")
-
-
-#     '''
-#     keep track of 'truth' sites used, they should only be usable once
-#     if toCount=True, the true variant will be counted; if False, it will not
-#     '''
-#     used_truth = {}
-    
-#     '''
-#     if submitters use MATEID in their BND calls we can 'tie' them together,
-#     indexed by one mate, contains info on other mate in pair
-#     '''
-#     used_bnd_mates = {}
-
-#     ''' parse submission vcf, compare to truth '''
-#     for subrec in subvcfh:
-#         subrec = prefix(subrec, usechr)
-#         if relevant(subrec, vtype, ignorechroms) and passfilter(subrec):
-#             subrecs += 1
-            
-#             matched = 'UN'
-
-#             startpos, endpos = subrec.start, subrec.end
-
-#             if vtype == 'SV' and subrec.is_sv:
-#                 startpos, endpos = expand_sv_ends(subrec, useCIs=False)
-            
-#             sub_is_masked = mask(subrec, truvcfh, truchroms, active=truthmask)
-            
-#             if subrec.CHROM in truchroms:
-#                 truoverlaplist = [trurec for trurec in truvcfh.fetch(subrec.CHROM, startpos, end=endpos)]
-#                 for trurec in truoverlaplist:
-#                     if relevant(trurec, vtype, ignorechroms) and match(subrec, trurec, vtype=vtype):
-#                         # subrec matches a true variant
-#                         tru_is_masked = mask(trurec, truvcfh, truchroms, active=truthmask)
-                        
-#                         if not sub_is_masked and not tru_is_masked:
-#                             if str(trurec) not in used_truth and matched == 'TP':
-#                                 # subrec already matches another true variant
-#                                 used_truth[str(trurec)] = { 'toCount': False, 'masked': tru_is_masked }
-                            
-#                             elif matched != 'TP' and (str(trurec) not in used_truth or not used_truth[str(trurec)]['toCount']):
-#                                 # subrec matches an unused true variant
-#                                 matched = 'TP'
-#                                 used_truth[str(trurec)] = { 'toCount': True, 'masked': tru_is_masked }
-                        
-#                         elif str(trurec) not in used_truth:
-#                             # subrec matches an unused true variant but at least one is masked
-#                             used_truth[str(trurec)] = { 'toCount': False, 'masked': tru_is_masked }
-            
-#                         if matched != 'TP':
-#                             '''
-#                             matched a true variant that was already counted
-#                             and/or has a different mask status/both are masked
-#                             only note if a true variant wasn't already IDed for subrec
-#                             '''
-#                             matched = 'T'
-
-#             if matched == 'TP' or matched == 'T':
-#                 if subrec.ID in used_bnd_mates and not used_bnd_mates[subrec.ID]['positive']:
-#                     # BND mate call was a false positive, remove conflict
-#                     if used_bnd_mates[subrec.ID]['masked']:
-#                         fpcountmasked -= 1
-#                     else:
-#                         fpcount -= 1
-#                     subuncount += 1
+            if genotype == truGenotype:
+                validated = validated + 1
+                if sampleID in sample_validated:
+                    sample_validated[sampleID] = sample_validated[sampleID] + 1
+                else: 
+                    sample_validated[sampleID] = 1
+                #print "Matched: " + sampleID + " CALLED: " + genotype + " vs. GENOTYPE: " + truGenotype
+            #elif:
+            else:
                 
-#                 elif subrec.INFO.get('MATEID'):
-#                     # keep track of the mate info
-#                     if isinstance(subrec.INFO.get('MATEID'), list):
-#                         mateID = subrec.INFO.get('MATEID')[0]
-#                     else:
-#                         mateID = subrec.INFO.get('MATEID')
-#                     used_bnd_mates[mateID] = { 'positive': True, 'masked': sub_is_masked }
-            
-#             elif matched == 'UN' and subrec.ID not in used_bnd_mates:
-#                 # subrec does not match a true variant and it is not tied to a previous match through a mate
-#                 matched = 'FP'
+                unvalidated = unvalidated + 1
+
+                mismatch_GT = "CALLED_" + genotype + ";GENOTYPE_" + truGenotype
+                if mismatch_GT in unvalidated_by_type:
+                    unvalidated_by_type[mismatch_GT] = unvalidated_by_type[mismatch_GT] + 1
+                else: 
+                    unvalidated_by_type[mismatch_GT] = 1
                 
-#                 if sub_is_masked:
-#                     fpcountmasked += 1
-#                 else:
-#                     fpcount += 1
-                    
-#                 if subrec.INFO.get('MATEID'):
-#                     # keep track of the mate info
-#                     if isinstance(subrec.INFO.get('MATEID'), list):
-#                         mateID = subrec.INFO.get('MATEID')[0]
-#                     else:
-#                         mateID = subrec.INFO.get('MATEID')
-#                     used_bnd_mates[mateID] = { 'positive': False, 'masked': sub_is_masked }
-                
-#             if matched == 'TP':
-#                 if sub_is_masked:
-#                     tpcountmasked += 1
-#                 else:
-#                     tpcount += 1
-#             elif matched == 'UN' or matched == 'T':
-#                 subuncount += 1
+                if sampleID in sample_unvalidated:
+                    if mismatch_GT in sample_unvalidated[sampleID]:
+                        sample_unvalidated[sampleID][mismatch_GT] = sample_unvalidated[sampleID][mismatch_GT] + 1
+                    else:
+                        sample_unvalidated[sampleID][mismatch_GT] = 1
+                else: 
+                    sample_unvalidated[sampleID][mismatch_GT] = 1
+                #print "Mistmatched: " + sampleID + " CALLED: " + genotype + " vs. GENOTYPE: " + truGenotype
 
-#     # sanity checks
-#     assert (tpcount + fpcount + tpcountmasked + fpcountmasked + subuncount == subrecs)
-    
-#     if subrecs == 0:
-#         raise Exception("No filter-passing variants in submission! Are you sure you selected the correct variant type (SNV/INDEL/SV)?\n")
+    outFH.write("Sample\tValidated_count\tCALLED_0/1;GENOTYPE_0/0\tCALLED_0/1;GENOTYPE_1/1\tCALLED_1/1;GENOTYPE_0/0\tCALLED_1/1;GENOTYPE_0/1\n")
+    # iterate through samples and print their validated; unvalidated; chr
+    for sampleID in sample_validated:
+            outString = sampleID + "\t" + str(sample_validated[sampleID])
+            outFH.write(outString)  
+            for mistmatch_type in mistmatch_types:
+                mismatch_string = "\t"  
+                unvalidated_count = str(0)
+                if sampleID in sample_unvalidated and mistmatch_type in sample_unvalidated[sampleID]:
+                    unvalidated_count = str(sample_unvalidated[sampleID][mismatch_type])
+                mismatch_string = mismatch_string + unvalidated_count
+                outFH.write(mismatch_string)
 
-#     # count the true variants that should not be counted as TPs/FNs
-#     truuncountnotmasked = 0
-#     for k, v in used_truth.iteritems():
-#         if not v['toCount'] and not v['masked']:
-#             truuncountnotmasked += 1
-    
-#     result = { 'tp' : float(tpcount),
-#                'fp' : float(fpcount),
-#                'fn' : float(trunotmasked - tpcount - truuncountnotmasked) }
-    
-#     return result
+            outFH.write("\n")
 
 
-# def stats(result):
-#     ''' calculate precision, recall, fscore  from result dictionary '''
-#     assert 'tp' in result and 'fp' in result and 'fn' in result, "invalid result dictionary!"
-    
-#     recall = float(1)
-#     if result['tp'] + result['fn'] > 0:
-#         recall = result['tp'] / (result['tp'] + result['fn'])
-    
-#     precision = float(1)
-#     if result['tp'] + result['fp'] > 0:
-#         precision = result['tp'] / (result['tp'] + result['fp'])
-    
-#     fscore = float(0)
-#     if precision > 0 or recall > 0:
-#         fscore = 2*((precision*recall) / (precision+recall))
-    
-#     return recall, precision, fscore
+    # for mismatch_GT in unvalidated_by_type:
+    #     print mismatch_GT + '\t' +  str(unvalidated_by_type[mismatch_GT]) + '\t' +  outFstring
+
+    outFH.close()
+
     
 
 if __name__ == '__main__':
@@ -334,12 +207,7 @@ if __name__ == '__main__':
             sys.stderr.write("truth VCF does not appear to be indexed. bgzip + tabix index required.\n")
             sys.exit(1)
 
-        print "\nmasked:"
-        counts = evaluate(subvcf, truvcf)
-        statresults = stats(counts)
-        ncalls  = countrecs(counts)
-        print "recall, precision, F1-score: " + ','.join(map(str, statresults))
-        print "number of counted mutations in submission: " + str(ncalls)
+        evaluate(subvcf, truvcf)
 
     else:
         print "standalone usage for testing:", sys.argv[0], "<submission VCF> <truth VCF (tabix-indexed)>"
