@@ -13,10 +13,10 @@ def vcf2charger( chrom , pos , ref , alt ):
 	#ensFields.append( str( stop ) )
 	ref = variant.nullCheck( ref )
 	alt = variant.nullCheck( alt )
-    ensFields.append( str( ref ) )
-    ensFields.append( str( alt ) )
-    var = "_".join(ensFields)
-    return var
+	ensFields.append( str( ref ) )
+	ensFields.append( str( alt ) )
+	var = "_".join(ensFields)
+	return var
 
 def main():
     def usage():
@@ -38,9 +38,9 @@ def main():
     #     if opt == '-h': # h means user needs help
     #         usage(); sys.exit()
 
-    if len(sys.argv) == 2:
-        CharGerFH= sys.argv[0]
-        vcfFH = sys.argv[1]
+    if len(sys.argv) >= 3:
+        CharGerFH= sys.argv[1]
+        vcfFH = sys.argv[2]
     else:
         usage()
         sys.exit()
@@ -64,14 +64,14 @@ def main():
         # stop = F[3]
         # ref = F[4]
         # alt = F[5]
-        charGer_class = F[19]
-        if "Pathogenic" in charGer_class:
-            # if F[4] == "-":
-            #     F[4] = "0"
-            # if F[5] == "-":
-            #     F[5] = "0"
-            var = "_".join(F[1:3]+F[4:6])
-            varCharGer[var]=line
+        if len(F) > 20 and "Pathogenic" in F[19]:
+            	# if F[4] == "-":
+            	#     F[4] = "0"
+            	# if F[5] == "-":
+            	#     F[5] = "0"
+            	var = "_".join(F[1:3]+F[4:6])
+            	varCharGer[var]=line
+		#print "added charger var: " + var
     charGerF.close()
 
     try:
@@ -81,42 +81,44 @@ def main():
 
     vcfHeader = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
     print vcfHeader + "\t" + "Sample" + "\t" + "Genotype" + "\t" + CharGerHeader
-
+    samples = []
+    
     #read input file
     for line in vcfF:
         line=line.strip()
         F = line.split("\t")
-        samples = []
 
         # store sample order
         if line.startswith("#CHR"):
-            for i in range(len(F):
-                samples[i] = F[i]
+            for i in range(len(F)):
+                samples.append(str(F[i]))
+		continue
         elif line.startswith("#"):
             continue
-   
-        if len(F) > 4:
+	
+	if len(F) > 4:
             chrom = F[0]
             pos = F[1]
             #stop = F[2]
             ref = F[3]
             alt = F[4]
             var = vcf2charger(chrom , pos , ref , alt)
-
+	    print "VCF var: " + var
             CharGerAnno = ""
             # print only if it's in CharGer
             if var in varCharGer:
                 CharGerAnno = varCharGer[var]
                 # check samples have this var
                 for i in range(9,len(F)) :
-                    genotype = F[i]
-                ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10 
-                    if genotype == "./.": # not called in variant files we have
+                    sample = samples[i]
+		    genotype = F[i]
+                    ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10 
+                    if genotype.startswith("./."): # not called in variant files we have
                         continue
                     else: 
                         vcfVar = "\t".join(F[0:9])
-                        sample = samples[i]  
-                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
+                        #sample = samples[i]
+                        #print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
     
     vcfF.close()
 
