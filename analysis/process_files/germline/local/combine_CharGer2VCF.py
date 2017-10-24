@@ -6,17 +6,36 @@ import getopt
 import gzip
 from biomine.variant import variant
 
+
+def removeOverlap( var ):
+    var.removeOverlapFromReferenceAndAlternate( )
+    return [ var.start , var.stop , var.reference , var.alternate ]
+
 def vcf2charger( chrom , pos , ref , alt ):
 	ensFields = []
-	ensFields.append( chrom )
+
+    var = variant(  chromosome = chrom , \
+                        reference = ref , \
+                        alternate = alt , \
+                        start = pos , \
+                        stop = pos \
+                    )
+
+    if len( ref ) != 1 or len( alt ) != 1: #is snv
+        [ start , stop , ref , alt ] = removeOverlap( var )
+    pos = start	
+
+    ensFields.append( chrom )
 	ensFields.append( str( pos ) )
 	#ensFields.append( str( stop ) )
 	ref = variant.nullCheck( ref )
 	alt = variant.nullCheck( alt )
 	ensFields.append( str( ref ) )
 	ensFields.append( str( alt ) )
+
 	var = "_".join(ensFields)
 	return var
+
 
 def main():
     def usage():
@@ -103,7 +122,7 @@ def main():
             ref = F[3]
             alt = F[4]
             var = vcf2charger(chrom , pos , ref , alt)
-	    print "VCF var: " + var
+	        #print "VCF var: " + var
             CharGerAnno = ""
             # print only if it's in CharGer
             if var in varCharGer:
@@ -111,7 +130,7 @@ def main():
                 # check samples have this var
                 for i in range(9,len(F)) :
                     sample = samples[i]
-		    genotype = F[i]
+                    genotype = F[i]
                     ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10 
                     if genotype.startswith("./."): # not called in variant files we have
                         continue
