@@ -124,9 +124,6 @@ def main():
 	    if len( ref ) != 1 or len( alt ) != 1: #is not snv
             	#print "VCF pos: " + pos
 		[ start , stop , ref , alt ] = removeOverlap( var )
-	    elif len(ref) > len(alt): # CharGer output for deletions are currently - and -; perhaps because I changed pyvcf code?
-		ref = "-"
-		alt = "-"
             pos = start
 
             var = vcf2charger(chrom , pos , ref , alt)
@@ -147,6 +144,21 @@ def main():
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
                         print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
+	    # check if it matches ref alt both = "-"
+	    var2 = chrom + "_" + pos  + "_-_-"
+	    if var2 in varCharGer:
+		CharGerAnno = varCharGer[var2]
+                # check samples have this var
+                for i in range(9,len(F)) :
+                    sample = samples[i]
+                    genotype = F[i]
+                    ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10
+                    if genotype.startswith("./.") or genotype.startswith("0/0"): # not called in variant files we have; or 0/0 as occured in biallelic VCF
+                        continue
+                    else:
+                        vcfVar = "\t".join(F[0:9])
+                        #sample = samples[i]
+                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno 
     
     vcfF.close()
 
