@@ -14,18 +14,7 @@ def removeOverlap( var ):
 def vcf2charger( chrom , pos , ref , alt ):
 	ensFields = []
 
-    var = variant(  chromosome = chrom , \
-                        reference = ref , \
-                        alternate = alt , \
-                        start = pos , \
-                        stop = pos \
-                    )
-
-    if len( ref ) != 1 or len( alt ) != 1: #is snv
-        [ start , stop , ref , alt ] = removeOverlap( var )
-    pos = start	
-
-    ensFields.append( chrom )
+	ensFields.append( chrom )
 	ensFields.append( str( pos ) )
 	#ensFields.append( str( stop ) )
 	ref = variant.nullCheck( ref )
@@ -94,7 +83,10 @@ def main():
     charGerF.close()
 
     try:
-        vcfF = open(vcfFH,"r")
+        if vcfFH.endswith(".gz"):
+		vcfF = gzip.open(vcfFH,"r")
+	else:
+		vcfF = open(vcfFH,"r")
     except IOError:
         print("VCF file , vcfFH, does not exist!") 
 
@@ -111,7 +103,7 @@ def main():
         if line.startswith("#CHR"):
             for i in range(len(F)):
                 samples.append(str(F[i]))
-		continue
+	    continue
         elif line.startswith("#"):
             continue
 	
@@ -121,8 +113,25 @@ def main():
             #stop = F[2]
             ref = F[3]
             alt = F[4]
+	    start = pos
+	    var = variant(  chromosome = chrom , \
+                        reference = ref , \
+                        alternate = alt , \
+                        start = pos , \
+                        stop = pos \
+                    )
+            #if  len(ref) < len(alt):
+	    if len( ref ) != 1 or len( alt ) != 1: #is not snv
+            	#print "VCF pos: " + pos
+		[ start , stop , ref , alt ] = removeOverlap( var )
+	    elif len(ref) > len(alt): # CharGer output for deletions are currently - and -; perhaps because I changed pyvcf code?
+		ref = "-"
+		alt = "-"
+            pos = start
+
             var = vcf2charger(chrom , pos , ref , alt)
-	        #print "VCF var: " + var
+	    #print "VCF var: " + var # for debugging purpose
+
             CharGerAnno = ""
             # print only if it's in CharGer
             if var in varCharGer:
@@ -132,12 +141,12 @@ def main():
                     sample = samples[i]
                     genotype = F[i]
                     ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10 
-                    if genotype.startswith("./."): # not called in variant files we have
+                    if genotype.startswith("./.") or genotype.startswith("0/0"): # not called in variant files we have; or 0/0 as occured in biallelic VCF
                         continue
                     else: 
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
-                        #print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
+                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
     
     vcfF.close()
 
