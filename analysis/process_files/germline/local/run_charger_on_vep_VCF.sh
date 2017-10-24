@@ -16,8 +16,9 @@ if [ ! -d ${results} ]; then
         mkdir ${results}
 fi
 
-queue="bigmem"
-#queue="long"
+#queue="bigmem"
+queue="long"
+queue="ding-lab"
 group="/khuang"
 
 

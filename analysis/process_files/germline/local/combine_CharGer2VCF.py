@@ -91,7 +91,7 @@ def main():
         print("VCF file , vcfFH, does not exist!") 
 
     vcfHeader = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
-    print vcfHeader + "\t" + "Sample" + "\t" + "Genotype" + "\t" + CharGerHeader
+    print "Sample" + "\t" + "Genotype" + "\t" + CharGerHeader + "\t" + vcfHeader
     samples = []
     
     #read input file
@@ -143,9 +143,9 @@ def main():
                     else: 
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
-                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
+                        print sample + "\t" + genotype + "\t" + CharGerAnno  + "\t" + vcfVar
 	    # check if it matches ref alt both = "-"
-	    var2 = chrom + "_" + pos  + "_-_-"
+	    var2 = str(chrom) + "_" + str(pos)  + "_-_-"
 	    if var2 in varCharGer:
 		CharGerAnno = varCharGer[var2]
                 # check samples have this var
@@ -158,7 +158,7 @@ def main():
                     else:
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
-                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno 
+                        print sample + "\t" + genotype + "\t" + CharGerAnno + "\t" + vcfVar
     
     vcfF.close()
 
