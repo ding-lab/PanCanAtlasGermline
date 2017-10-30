@@ -14,9 +14,9 @@ reffasta="/gscmnt/gc2525/dinglab/rmashl/Software/bin/VEP/v85/cache/homo_sapiens/
 assembly="GRCh37"
 #opts="--plugin ExAC,/gscmnt/gc2706/dinglab/medseq/ExAC/VCF/ExAC.r0.3.1.sites.vep.vcf.gz" #"--everything"
 opts="--everything"
-results="AnnotatedVCFs/"
+results="new_run/AnnotatedVCFs/"
 variantBuffer=2000
-queue="ding-lab"
+queue="long"
 group="/khuang"
 forks=4
 mem=20000000
@@ -33,7 +33,7 @@ for i in {1..22} X Y
 do
 	vcf=PCA.r1.TCGAbarcode.merge.exon.chr${i}.vcf.gz
 	out=PCA.r1.TCGAbarcode.merge.exon.chr${i}.vcf
-	runVEP="perl format.pl $inputDir $vcf; ${vep_cmd} ${opts} --offline --cache --dir ${cachedir} --assembly ${assembly} --format vcf --vcf -i anno.$out -o ${results}anno.${out} --force_overwrite --fasta ${reffasta} --fork ${forks} --buffer_size ${variantBuffer};"
+	runVEP="perl format.pl $inputDir $vcf; ${vep_cmd} ${opts} --offline --cache --dir ${cachedir} --assembly ${assembly} --format vcf --vcf -i new_run/preVEP/anno.$out -o ${results}anno.${out} --force_overwrite --fasta ${reffasta} --fork ${forks} --buffer_size ${variantBuffer};"
 	log="${results}anno.${vcf}.log"
 	echo "bsub -g ${group} -q ${queue} -n ${forks} -M ${mem} -oo ${log} \"${runVEP}\""
 done

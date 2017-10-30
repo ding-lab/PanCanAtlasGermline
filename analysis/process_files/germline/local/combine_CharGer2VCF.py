@@ -91,7 +91,7 @@ def main():
         print("VCF file , vcfFH, does not exist!") 
 
     vcfHeader = "#CHROM\tPOS\tID\tREF\tALT\tQUAL\tFILTER\tINFO\tFORMAT"
-    print vcfHeader + "\t" + "Sample" + "\t" + "Genotype" + "\t" + CharGerHeader
+    print "Sample" + "\t" + "Genotype" + "\t" + CharGerHeader + "\t" + vcfHeader
     samples = []
     
     #read input file
@@ -124,9 +124,8 @@ def main():
 	    if len( ref ) != 1 or len( alt ) != 1: #is not snv
             	#print "VCF pos: " + pos
 		[ start , stop , ref , alt ] = removeOverlap( var )
-            pos = start
 
-            var = vcf2charger(chrom , pos , ref , alt)
+            var = vcf2charger(chrom , start , ref , alt)
 	    #print "VCF var: " + var # for debugging purpose
 
             CharGerAnno = ""
@@ -143,9 +142,11 @@ def main():
                     else: 
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
-                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno  
-	    # check if it matches ref alt both = "-"
-	    var2 = chrom + "_" + pos  + "_-_-"
+                        print sample + "\t" + genotype + "\t" + CharGerAnno  + "\t" + vcfVar
+	        continue
+
+	    # in cases of deletions; check if it matches ref alt both = "-"
+	    var2 = vcf2charger(chrom , pos , "-" , "-")
 	    if var2 in varCharGer:
 		CharGerAnno = varCharGer[var2]
                 # check samples have this var
@@ -158,7 +159,24 @@ def main():
                     else:
                         vcfVar = "\t".join(F[0:9])
                         #sample = samples[i]
-                        print vcfVar + "\t" + sample + "\t" + genotype + "\t" + CharGerAnno 
+                        print sample + "\t" + genotype + "\t" + CharGerAnno + "\t" + vcfVar
+	        continue
+	    if len(ref) <= len(alt):
+                continue
+	    var3 = str(chrom) + "_" +  str(pos) + "_-_-"
+            if var3 in varCharGer:
+                CharGerAnno = varCharGer[var3]
+                # check samples have this var
+                for i in range(9,len(F)) :
+                    sample = samples[i]
+                    genotype = F[i]
+                    ##CHROM  POS     ID      REF     ALT     QUAL    FILTER  INFO    FORMAT  TCGA-OR-A5K0-10B-01D-A29L-10
+                    if genotype.startswith("./.") or genotype.startswith("0/0"): # not called in variant files we have; or 0/0 as occured in biallelic VCF
+                        continue
+                    else:
+                        vcfVar = "\t".join(F[0:9])
+                        #sample = samples[i]
+                        print sample + "\t" + genotype + "\t" + CharGerAnno + "\t" + vcfVar
     
     vcfF.close()
 
