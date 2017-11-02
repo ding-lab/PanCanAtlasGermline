@@ -5,7 +5,7 @@
 >Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG 
 >Synapse: syn4602499  
 
-##Meeting call-ins: ##  
+## Meeting call-ins: ##  
 *US: 877-951-7311
 *UK: 0808-238-9817
 *Australia: 1-800-010717
@@ -23,7 +23,7 @@
 *Zoom screen share: https://bcm.zoom.us/j/881727498?*pwd=lGKu4aVDTgE 
 *Password: TCGA
 
-##Getting started: ##  
+## Getting started: ##  
 >1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command 
 >2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html)  
 >3) Read this one page quick start to google cloud compute engine (https://cloud.google.com/compute/docs/quickstarts) . 
