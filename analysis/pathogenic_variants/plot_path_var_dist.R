@@ -38,7 +38,7 @@ plot_heatmap = function(data){
 }
 
 # CharGer classification file
-var_f = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.tsv"
+var_f = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.pass.tsv"
 
 # other files
 cancer_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/sample_listing/out/cancer_count_wethni_waao.txt" 
@@ -62,6 +62,7 @@ plot_barplot(variants,x_string = "cancer", fill_string = "CharGer_Classification
 
 # Frequency plotting #
 # get non-redundant sample entry first
+variants = variants[order(variants$CharGer_Classification,decreasing = T),]
 variants_uni = variants[!duplicated(variants$Sample),]
 
 # plot the bar plot of the counts
@@ -71,6 +72,11 @@ all_count_m = merge(cancer_count, all_count, by="Cancer")
 all_count_m$freq = all_count_m$count/all_count_m$sample_size
 all_count_m$CharGer_Classification = factor(all_count_m$CharGer_Classification, levels = c("Pathogenic","Likely Pathogenic"))
 all_count_m = all_count_m[order(all_count_m$CharGer_Classification),]
+
+cat("Percentage of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Pathogenic"]),"\n")
+cat("Additional percentage of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Likely Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Likely Pathogenic"]),"\n")
+tn = "PCA.path.carrier_by_cancer.freq.tsv"
+write.table(all_count_m, quote=F, sep="\t", file = tn, row.names = F)
 
 all_count_m_sum = dcast(all_count_m, Cancer ~ CharGer_Classification, value.var="freq")
 cancer_order = all_count_m_sum$Cancer[order(all_count_m_sum$Pathogenic, decreasing=TRUE)]

@@ -89,7 +89,7 @@ fn = "out/normal_tumor_VAF_postfilter.pdf"
 ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
 
 ##### classify whether a variant is cancer-relevant #####
-cancer_terms = c("tumor","cancer","oma","neoplasia")
+cancer_terms = c("tumor","cancer","neoplasia")
 
 variants_pca$predisposition_gene = F
 variants_pca$predisposition_gene[variants_pca$HUGO_Symbol %in% predisposition_genes] = TRUE
@@ -97,9 +97,13 @@ variants_pca$cancer_term_trait = FALSE
 for (term in cancer_terms){
   variants_pca$cancer_term_trait[grep(term,tolower(variants_pca$ClinVar_Traits))] = TRUE
 }
+variants_pca$cancer_term_trait[grep("oma$",tolower(variants_pca$ClinVar_Traits))] = TRUE
+
 table(variants_pca$predisposition_gene,variants_pca$cancer_term_trait)
 variants_pca$cancer_related = F
 variants_pca$cancer_related[variants_pca$predisposition_gene | variants_pca$cancer_term_trait] = T
+
+table(variants_pca$ClinVar_Traits[variants_pca$cancer_term_trait])[table(variants_pca$ClinVar_Traits[variants_pca$cancer_term_trait])>3]
 
 # variant frequency annotation
 var_freq = data.frame(table(variants_pca$HGVSg))
@@ -161,11 +165,13 @@ variants_pca_frq_rare_1000G_ExAC$ExAC_adj_AF_Manual[variants_pca_frq_rare_1000G_
 variants_pca_frq_rare_1000G_ExAC$ExAC_adj_AF_Manual[variants_pca_frq_rare_1000G_ExAC$HGVSg=="9:g.98209616_98209617insG" ] =		0.0001554
 
 variants_pca_frq_rare_1000G_ExAC_pass = variants_pca_frq_rare_1000G_ExAC[is.na(variants_pca_frq_rare_1000G_ExAC$ExAC_adj_AF_Manual) | variants_pca_frq_rare_1000G_ExAC$ExAC_adj_AF_Manual < 0.0005,]
+cat("Number of variants passing 1000G/ExAC 0.05% cut-off:",nrow(variants_pca_frq_rare_1000G_ExAC_pass),"\n")
 ## don't do cohort freq for now
 # variants_pca_frq_rare_1000G_ExAC_pass_001 = variants_pca_frq_rare_1000G_ExAC_pass[variants_pca_frq_rare_1000G_ExAC_pass$Cohort_AF< 0.01,]
 # tail(table(variants_pca_frq_rare_1000G_ExAC_pass_001$HGVSg)[order(table(variants_pca_frq_rare_1000G_ExAC_pass_001$HGVSg))])[2:5]
 
 variants_pca_frq_rare_1000G_ExAC_pass_cancer = variants_pca_frq_rare_1000G_ExAC_pass[variants_pca_frq_rare_1000G_ExAC_pass$cancer_related,]
+cat("Number of these variants that are cancer-relevant:",nrow(variants_pca_frq_rare_1000G_ExAC_pass_cancer),"\n")
 
 # p = ggplot(data=variants_pca_frq_rare_1000G_ExAC_pass_cancer)
 # p = p + geom_histogram(aes(x=Cohort_AF, fill=Variant_Classification),binwidth = 0.0005)
@@ -196,6 +202,15 @@ variants_pca_frq_rare_1000G_ExAC_pass_cancer$previous_manual_review[paste(varian
 tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.tsv"
 write.table(variants_pca_frq_rare_1000G_ExAC_pass_cancer, quote=F, sep="\t", file = tn, row.names = F)
 
-# table(variants_pca_frq_rare_1000G_ExAC_pass_cancer$Variant_Classification)
-# length(unique(variants_pca_frq_rare_1000G_ExAC_pass_cancer$bcr_patient_barcode))
-# length(unique(variants_pca_frq_rare_1000G_ExAC_pass_cancer[variants_pca_frq_rare_1000G_ExAC_pass_cancer$Cohort_AF < 0.0005,]$bcr_patient_barcode))
+##### combine with manual review result #####
+RJ_manual_review_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/pathogenic_variants/Germline_PCA_RJ/charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.forReview.RJ.txt"
+RJ_manual_review = read.table(sep="\t",header=T,file=RJ_manual_review_f, stringsAsFactors=FALSE, quote = "",fill=TRUE)
+RJ_manual_review_brief =  RJ_manual_review[,c("Sample","HGVSg","reyka_manual_review")]
+
+final_var = merge(variants_pca_frq_rare_1000G_ExAC_pass_cancer,RJ_manual_review_brief, by = c("Sample","HGVSg"))
+final_var_pass = final_var[final_var$reyka_manual_review %in% c("pass" , "pass - nearby mutation" ),]
+cat("Reyka's manual review result count for cancer variants:","\n")
+table(final_var_pass$reyka_manual_review)
+
+tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.pass.tsv"
+write.table(final_var_pass, quote=F, sep="\t", file = tn, row.names = F)
