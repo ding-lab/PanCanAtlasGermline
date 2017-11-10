@@ -11,8 +11,6 @@ system("mkdir out")
 date=Sys.time()
 date = sub(" .*","",date)
 outPath=paste("out/", date, "/",sep="")
-# system(paste("mkdir ", outPath, sep=""))
-# pd = paste(outPath, date, sep="")
 
 col_paletteB = colorRampPalette(brewer.pal(9,"Blues"))
 col_paletteR = colorRampPalette(brewer.pal(9,"Reds"))
@@ -24,6 +22,22 @@ getPalette2 = colorRampPalette(YlGnBu)
 qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 set1 = brewer.pal(9,"Set1")
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals) ))
+
+getVarColorScale = function() {
+  colors = c(NA, "#d53e4f", "#fdae61") #positive is dark grey       
+  color.names = c("Uncertain","Pathogenic","Likely Pathogenic")
+  names(colors) = color.names
+  clinical.color.scale = scale_color_manual(name="Variant Classification", values=colors)
+  return(clinical.color.scale)
+}
+
+getVarFillScale = function() {
+  colors = c(NA, "#d53e4f", "#fdae61") #positive is dark grey       
+  color.names = c("Uncertain","Pathogenic","Likely Pathogenic")
+  names(colors) = color.names
+  clinical.color.scale = scale_fill_manual(name="Variant Classification", values=colors)
+  return(clinical.color.scale)
+}
 
 theme_nogrid = function(...) theme_bw() + theme(axis.line = element_line(colour = "black"),
                             panel.grid.major = element_blank(),
