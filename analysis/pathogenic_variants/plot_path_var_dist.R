@@ -73,6 +73,9 @@ all_count_m$freq = all_count_m$count/all_count_m$sample_size
 all_count_m$CharGer_Classification = factor(all_count_m$CharGer_Classification, levels = c("Pathogenic","Likely Pathogenic"))
 all_count_m = all_count_m[order(all_count_m$CharGer_Classification),]
 
+cat("Number of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Pathogenic"]),"\n")
+cat("Additional number of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Likely Pathogenic"]),"\n")
+
 cat("Percentage of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Pathogenic"]),"\n")
 cat("Additional percentage of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Likely Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Likely Pathogenic"]),"\n")
 tn = "PCA.path.carrier_by_cancer.freq.tsv"
@@ -88,11 +91,12 @@ all_count_m$CharGer_Classification = factor(all_count_m$CharGer_Classification, 
 p = ggplot(all_count_m,aes(x = Cancer, y = freq*100, fill = CharGer_Classification))
 p = p + geom_bar(stat = "identity") + theme_bw() + theme_nogrid() 
 p = p + labs(x = "Cancer Type", y="Percentage Carriers (%)")
+p = p + getVarFillScale()
 p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(colour="black", size=10, angle = 90, vjust=0.5), axis.text.y = element_text(colour="black", size=12))#element_text(colour="black", size=14))
 p = p + theme(legend.position = "top")
 p
 fn = 'out/PCA_carrierFreq_by_cancer_bar.pdf'
-ggsave(file=fn, useDingbats=FALSE)
+ggsave(file=fn, height = 6, width = 6, useDingbats=FALSE)
 
 ##### compare counts to Lu et al. #####
 # lu et al. discovery strategy
@@ -128,7 +132,7 @@ p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(col
 p = p + theme(legend.position = "top")
 p
 fn = 'out/previous_vs_novel_var_count.pdf'
-ggsave(file=fn, height = 5, width = 5, useDingbats=FALSE)
+ggsave(file=fn, height = 6, width = 6, useDingbats=FALSE)
 
 ##### heatmap: count of pathogenic variants by gene/cancer #####
 combined_sum_f_added = data.frame(table(variants$HUGO_Symbol, variants$cancer))
@@ -157,4 +161,4 @@ p = p  + theme_bw() + theme_nogrid() +
   theme(axis.title = element_text(size=16), axis.text.x = element_text(colour="black", size=12, angle=90, vjust = 0.5), axis.text.y = element_text(colour="black", size=12),axis.ticks = element_blank())#element_text(colour="black", size=14))
 p
 fn = 'out/PathVar_counts_ggroup_heatmap.pdf'
-ggsave(file=fn, height=7, width=7, useDingbats=FALSE)
+ggsave(file=fn, height=6, width=7, useDingbats=FALSE)

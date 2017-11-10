@@ -46,21 +46,21 @@ variants_pca = merge(variants_pca,all_rc,all.x = T, by=c("Sample","HGVSg"))
 variants_pca$normalVAF = variants_pca$normalAltCnt/variants_pca$normalDepth
 variants_pca$tumorVAF = variants_pca$tumorAltCnt/variants_pca$tumorDepth
 
-p = ggplot(data=variants_pca)
-p = p + geom_point(aes(x=normalVAF,y=tumorVAF), alpha = 0.02,stroke=0)
-p = p + theme_bw()
-p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
-p
-fn = "out/normal_tumor_VAF_prefilter.pdf"
-ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
-
-p = ggplot(data=variants_pca)
-p = p + geom_point(aes(x=normalAltCnt,y=tumorAltCnt), alpha = 0.02,stroke=0)
-p = p + theme_bw() + xlim(0,50) + ylim(0,50)
-p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
-p
-fn = "out/normal_tumor_altcnt_prefilter.pdf"
-ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
+# p = ggplot(data=variants_pca)
+# p = p + geom_point(aes(x=normalVAF,y=tumorVAF), alpha = 0.02,stroke=0)
+# p = p + theme_bw()
+# p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
+# p
+# fn = "out/normal_tumor_VAF_prefilter.pdf"
+# ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
+# 
+# p = ggplot(data=variants_pca)
+# p = p + geom_point(aes(x=normalAltCnt,y=tumorAltCnt), alpha = 0.02,stroke=0)
+# p = p + theme_bw() + xlim(0,50) + ylim(0,50)
+# p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
+# p
+# fn = "out/normal_tumor_altcnt_prefilter.pdf"
+# ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
 
 variants_pca = variants_pca[is.na(variants_pca$normalAltCnt) | (variants_pca$normalAltCnt > 4),]
 cat("Applying normal Alt readcount >= 5, # of variants left: ",nrow(variants_pca),"\n")
@@ -72,21 +72,21 @@ cat("Applying normal Alt readcount >= 0.2, # of variants left: ",nrow(variants_p
 variants_pca = variants_pca[is.na(variants_pca$tumorVAF) | (variants_pca$tumorVAF >= 0.2),]
 cat("Applying tumor Alt readcount >= 0.2, # of variants left: ",nrow(variants_pca),"\n")
 
-p = ggplot(data=variants_pca)
-p = p + geom_point(aes(x=normalAltCnt,y=tumorAltCnt), alpha = 0.02,stroke=0)
-p = p + theme_bw() + xlim(0,50) + ylim(0,50)
-p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
-p
-fn = "out/normal_tumor_altcnt_postfilter.pdf"
-ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
-
-p = ggplot(data=variants_pca)
-p = p + geom_point(aes(x=normalVAF,y=tumorVAF), alpha = 0.02,stroke=0)
-p = p + theme_bw()
-p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
-p
-fn = "out/normal_tumor_VAF_postfilter.pdf"
-ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
+# p = ggplot(data=variants_pca)
+# p = p + geom_point(aes(x=normalAltCnt,y=tumorAltCnt), alpha = 0.02,stroke=0)
+# p = p + theme_bw() + xlim(0,50) + ylim(0,50)
+# p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
+# p
+# fn = "out/normal_tumor_altcnt_postfilter.pdf"
+# ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
+# 
+# p = ggplot(data=variants_pca)
+# p = p + geom_point(aes(x=normalVAF,y=tumorVAF), alpha = 0.02,stroke=0)
+# p = p + theme_bw()
+# p = p + theme(axis.text.x = element_text(colour="black", size=8,angle=90,vjust=0.5))#,
+# p
+# fn = "out/normal_tumor_VAF_postfilter.pdf"
+# ggsave(file=fn, h=5,w=5,useDingbats=FALSE)
 
 ##### classify whether a variant is cancer-relevant #####
 cancer_terms = c("tumor","cancer","neoplasia")
@@ -112,8 +112,8 @@ variants_pca_frq = merge(variants_pca,var_freq,by="HGVSg")
 variants_pca_frq$Cohort_AF = variants_pca_frq$Cohort_AC/nrow(samples)
 # dim(variants_pca_frq[variants_pca_frq$Cohort_AF > 0.01,])
 
-tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.tsv"
-write.table(variants_pca_frq, quote=F, sep="\t", file = tn, row.names = F)
+# tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.tsv"
+# write.table(variants_pca_frq, quote=F, sep="\t", file = tn, row.names = F)
 
 # table(variants_pca_frq$Cohort_AF < 0.0005,variants_pca_frq$cancer_related) 
 # sum(variants_pca_frq$Cohort_AF < 0.0005)
@@ -126,7 +126,7 @@ write.table(variants_pca_frq, quote=F, sep="\t", file = tn, row.names = F)
 # ##### check against previous variants #####
 # pan8000_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/functional_clinical_integration/tables/2016-07-18/2016-07-18_KH_pan8000_MAF0.05_germline_class_func_clin_somatic_PLP_only.txt"
 # pan8000 = read.table(sep="\t",header=T,file=pan8000_fn, stringsAsFactors=FALSE, quote = "")
-# pan8000$pan8000_sample_var = paste(pan8000$sample,pan8000$Start)  
+# pan8000$pan8000_sample_var = paste(pan8000$sample,pan8000$Start)
 # 
 # pca_var = paste(variants_pca_frq$bcr_patient_barcode,variants_pca_frq$Start)
 # length(pan8000$pan8000_sample_var)
@@ -136,6 +136,12 @@ write.table(variants_pca_frq, quote=F, sep="\t", file = tn, row.names = F)
 # not_found = pan8000[!(pan8000$pan8000_sample_var %in% pca_var),]
 # not_found = not_found[order(not_found$start),]
 # not_found_trun =not_found[not_found$Variant_Classification=="frameshift_variant",]
+# not_found$sampleInPCA = not_found$sample %in% samples$bcr_patient_barcode
+# cat("Characteristics of not-found variants:")
+# table(not_found$sampleInPCA)
+# table(not_found$HUGO_Symbol)
+# tn = "Pan8000notFoundinPCA.tsv"
+# write.table(not_found, quote=F, sep="\t", file = tn, row.names = F)
 
 ##### rare frequency filter #####
 variants_pca_frq_rare_1000G = variants_pca_frq[is.na(variants_pca_frq$GMAF) | variants_pca_frq$GMAF < 0.0005,]
@@ -198,9 +204,10 @@ variants_pca_frq_rare_1000G_ExAC_pass_cancer$previous_manual_review = NA
 variants_pca_frq_rare_1000G_ExAC_pass_cancer$previous_manual_review[paste(variants_pca_frq_rare_1000G_ExAC_pass_cancer$bcr_patient_barcode,variants_pca_frq_rare_1000G_ExAC_pass_cancer$Start,sep=":") %in% pass] = "Pass"
 variants_pca_frq_rare_1000G_ExAC_pass_cancer$previous_manual_review[paste(variants_pca_frq_rare_1000G_ExAC_pass_cancer$bcr_patient_barcode,variants_pca_frq_rare_1000G_ExAC_pass_cancer$Start,sep=":") %in% fail] = "Fail"
 
-
-tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.tsv"
-write.table(variants_pca_frq_rare_1000G_ExAC_pass_cancer, quote=F, sep="\t", file = tn, row.names = F)
+table(variants_pca_frq_rare_1000G_ExAC_pass_cancer$ACMG_Classification)
+table(variants_pca_frq_rare_1000G_ExAC_pass_cancer$ClinVar_Pathogenicity)
+# tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.tsv"
+# write.table(variants_pca_frq_rare_1000G_ExAC_pass_cancer, quote=F, sep="\t", file = tn, row.names = F)
 
 ##### combine with manual review result #####
 RJ_manual_review_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/pathogenic_variants/Germline_PCA_RJ/charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.forReview.RJ.txt"
@@ -212,5 +219,5 @@ final_var_pass = final_var[final_var$reyka_manual_review %in% c("pass" , "pass -
 cat("Reyka's manual review result count for cancer variants:","\n")
 table(final_var_pass$reyka_manual_review)
 
-tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.pass.tsv"
-write.table(final_var_pass, quote=F, sep="\t", file = tn, row.names = F)
+# tn = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.pass.tsv"
+# write.table(final_var_pass, quote=F, sep="\t", file = tn, row.names = F)
