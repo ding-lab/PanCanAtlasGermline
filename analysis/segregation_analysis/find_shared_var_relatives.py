@@ -97,7 +97,7 @@ def main():
             INFO = F[7]
             INFOsplit = INFO.split(";AC=")
             AC = int( INFOsplit[1] )
-            if AC > 10:
+            if AC > 20:
                 continue
             # loop through the relatives; if one has the var, check the other; only print if both has it
             for sample in existing_relatives:
