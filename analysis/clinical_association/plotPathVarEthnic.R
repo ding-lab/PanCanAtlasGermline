@@ -8,7 +8,7 @@ source("../global_aes_out.R")
 source("../dependency_files.R")
 
 
-gene_ethni_count = data.frame(table(pathVar$HUGO_Symbol,pathVar$AIM_ethnicity,pathVar$cancer))
+gene_ethni_count = data.frame(table(pathVarP$HUGO_Symbol,pathVarP$AIM_ethnicity,pathVarP$cancer))
 colnames(gene_ethni_count) = c("Gene","Ethnicity","Cancer","CarrierCount")
 
 clin_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/clinical/PanCan_ClinicalData_V4_wAIM.txt"
@@ -63,7 +63,7 @@ ggsave(file=fn, height=7, width=15, useDingbats=FALSE)
 top_gene = c()
 for (gene in unique(count.F_25$Gene)){
   count = sum(count.F_25$CarrierCount[count.F_25$Gene == gene])
-  if (count > 20){top_gene = c(top_gene, gene)}
+  if (count > 15){top_gene = c(top_gene, gene)}
 }
 
 count.F_25$Gene = as.character(count.F_25$Gene)
