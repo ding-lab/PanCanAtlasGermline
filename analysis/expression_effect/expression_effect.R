@@ -1,10 +1,12 @@
 ##### expression_effect.R #####
-# Kuan-lin Huang @ WashU 2016 May
+# Kuan-lin Huang @ WashU 2016 May , updated 2017 Nov.
 # analyze cohort level RNA-Seq data and convert to different matrices in a sample-gene format
 
-bdir = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/expression_effect"
+bdir = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/analysis/expression_effect"
 setwd(bdir)
-source("/Users/khuang/bin/LIB_exp.R")
+source("../../global_aes_out.R")
+source("../../dependency_files.R")
+
 
 ## function ##
 unfactorize = function(df){
@@ -99,7 +101,7 @@ colnames(exp_quantile_tables_all) = c("gene_name","sample","expression_quantile"
 exp_score_tables_all$sample = gsub("\\.","-",exp_score_tables_all$sample)
 exp_quantile_tables_all$sample = gsub("\\.","-",exp_quantile_tables_all$sample)
 
-fn = paste(pd, "pancan_exp_log2RSEM_all.tsv", sep="_")
+fn = "out/pancan_exp_log2RSEM_all.tsv"
 write.table(exp_score_tables_all, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
-fn = paste(pd, "pancan_exp_quantile_all.tsv", sep="_")
+fn = "out/pancan_exp_quantile_all.tsv"
 write.table(exp_quantile_tables_all, file=fn, quote=F, sep="\t", col.names=T, row.names=F)

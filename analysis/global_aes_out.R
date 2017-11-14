@@ -3,8 +3,11 @@
 
 # dependencies
 library(ggplot2)
+library(plyr)
 library(reshape2)
 library(RColorBrewer)
+library(UpSetR)
+library(ggrepel)
 
 # mis
 system("mkdir out")
@@ -23,17 +26,173 @@ qual_col_pals = brewer.pal.info[brewer.pal.info$category == 'qual',]
 set1 = brewer.pal(9,"Set1")
 col_vector = unlist(mapply(brewer.pal, qual_col_pals$maxcolors, rownames(qual_col_pals) ))
 
+getPCACancerColor = function() {
+  # according to google spreadsheet: https://docs.google.com/spreadsheets/d/1Nb9mMkonAhZR1_2OI9nv4ylCei0LZjAf-2vYTRQcXKw/edit#gid=1704872109
+  colors = c(
+    "#C1A72F",
+    "#FAD2D9",
+    "#ED2891",
+    "#F6B667",
+    "#104A7F",
+    "#9EDDF9",
+    "#3953A4",
+    "#007EB5",
+    "#B2509E",
+    "#97D1A9",
+    "#ED1C24",
+    "#F8AFB3",
+    "#EA7075",
+    "#754C29",
+    "#D49DC7",
+    "#CACCDB",
+    "#D3C3E0",
+    "#A084BD",
+    "#542C88",
+    "#D97D25",
+    "#6E7BA2",
+    "#E8C51D",
+    "#7E1918",
+    "#DAF1FC",
+    "#00A99D",
+    "#BBD642",
+    "#00AEEF",
+    "#BE1E2D",
+    "#F9ED32",
+    "#CEAC8F",
+    "#FBE3C7",
+    "#F89420",
+    "#009444")    
+  color.names = c("ACC",
+                  "BLCA",
+                  "BRCA",
+                  "CESC",
+                  "CHOL",
+                  "COAD",
+                  "DLBC",
+                  "ESCA",
+                  "GBM",
+                  "HNSC",
+                  "KICH",
+                  "KIRC",
+                  "KIRP",
+                  "LAML",
+                  "LGG",
+                  "LIHC",
+                  "LUAD",
+                  "LUSC",
+                  "MESO",
+                  "OV",
+                  "PAAD",
+                  "PCPG",
+                  "PRAD",
+                  "READ",
+                  "SARC",
+                  "SKCM",
+                  "STAD",
+                  "TGCT",
+                  "THCA",
+                  "THYM",
+                  "UCEC",
+                  "UCS",
+                  "UVM")
+  names(colors) = color.names
+  color.scale = scale_color_manual(name="Cancer", values=colors)
+  return(color.scale)
+}
+
+getPCACancerFill = function() {
+  # according to google spreadsheet: https://docs.google.com/spreadsheets/d/1Nb9mMkonAhZR1_2OI9nv4ylCei0LZjAf-2vYTRQcXKw/edit#gid=1704872109
+  colors = c(
+    "#C1A72F",
+    "#FAD2D9",
+    "#ED2891",
+    "#F6B667",
+    "#104A7F",
+    "#9EDDF9",
+    "#3953A4",
+    "#007EB5",
+    "#B2509E",
+    "#97D1A9",
+    "#ED1C24",
+    "#F8AFB3",
+    "#EA7075",
+    "#754C29",
+    "#D49DC7",
+    "#CACCDB",
+    "#D3C3E0",
+    "#A084BD",
+    "#542C88",
+    "#D97D25",
+    "#6E7BA2",
+    "#E8C51D",
+    "#7E1918",
+    "#DAF1FC",
+    "#00A99D",
+    "#BBD642",
+    "#00AEEF",
+    "#BE1E2D",
+    "#F9ED32",
+    "#CEAC8F",
+    "#FBE3C7",
+    "#F89420",
+    "#009444")    
+  color.names = c("ACC",
+                  "BLCA",
+                  "BRCA",
+                  "CESC",
+                  "CHOL",
+                  "COAD",
+                  "DLBC",
+                  "ESCA",
+                  "GBM",
+                  "HNSC",
+                  "KICH",
+                  "KIRC",
+                  "KIRP",
+                  "LAML",
+                  "LGG",
+                  "LIHC",
+                  "LUAD",
+                  "LUSC",
+                  "MESO",
+                  "OV",
+                  "PAAD",
+                  "PCPG",
+                  "PRAD",
+                  "READ",
+                  "SARC",
+                  "SKCM",
+                  "STAD",
+                  "TGCT",
+                  "THCA",
+                  "THYM",
+                  "UCEC",
+                  "UCS",
+                  "UVM")
+  names(colors) = color.names
+  color.scale = scale_fill_manual(name="Cancer", values=colors)
+  return(color.scale)
+}
+
 getVarColorScale = function() {
-  colors = c(NA, "#d53e4f", "#fdae61") #positive is dark grey       
-  color.names = c("Uncertain","Pathogenic","Likely Pathogenic")
+  colors = c(NA, "#b2182b", "#2166ac") #positive is dark grey       
+  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
+  names(colors) = color.names
+  clinical.color.scale = scale_color_manual(name="Variant Classification", values=colors)
+  return(clinical.color.scale)
+}
+
+getVarColorScale2 = function() {
+  colors = c("#252525", "#b2182b", "#2166ac") #positive is dark grey       
+  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
   names(colors) = color.names
   clinical.color.scale = scale_color_manual(name="Variant Classification", values=colors)
   return(clinical.color.scale)
 }
 
 getVarFillScale = function() {
-  colors = c(NA, "#d53e4f", "#fdae61") #positive is dark grey       
-  color.names = c("Uncertain","Pathogenic","Likely Pathogenic")
+  colors = c(NA, "#b2182b", "#2166ac") #positive is dark grey       
+  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
   names(colors) = color.names
   clinical.color.scale = scale_fill_manual(name="Variant Classification", values=colors)
   return(clinical.color.scale)
