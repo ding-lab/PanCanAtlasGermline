@@ -7,6 +7,9 @@ setwd(bdir)
 source("../global_aes_out.R")
 source("../dependency_files.R")
 
+pathVarP_hot = pathVarP[pathVarP$colocalized_somatic_mutation_count > 2 | pathVarP$PCGP,]
+write.table(file = "out/colocalize_var.tsv", pathVarP_hot,quote=F, sep = '\t',row.names = F)
+
 pathVarPOT_hot = pathVarPOT[pathVarPOT$colocalized_somatic_mutation_count > 2 | pathVarPOT$PCGP,]
 table(pathVarPOT_hot$HUGO_Symbol)
 pathVarPOT_hot$somatic_count_plot = pathVarPOT_hot$colocalized_somatic_mutation_count
