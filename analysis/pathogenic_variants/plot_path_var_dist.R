@@ -37,15 +37,12 @@ plot_heatmap = function(data){
   return(p)
 }
 
-# CharGer classification file
-var_f = "charged.PCA.r1.TCGAbarcode.merge.exon.ALL.vcf.samples.cleaned.expanded.AFcorrected.lowAF.sele.labeled.rare.cancer.pass.tsv"
-
 # other files
 cancer_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/sample_listing/out/cancer_count_wethni_waao.txt" 
 geneList_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/reference_files/20160713_Rahman_KJ_KH_152_gene_table_list.txt"
 
 ##### READ inputs #####
-variants = read.table(sep="\t",header=T,file=var_f, stringsAsFactors=FALSE, quote = "",fill=TRUE)
+variants = pathVarP
 
 cancer_clin = read.table(header=T,sep="\t",file = cancer_f)
 cancer_count = cancer_clin[,c("Cancer", "Sample.size")]
@@ -56,39 +53,39 @@ geneList = as.vector(t(geneList_t))
 
 ##### preliminary plotting #####
 
-plot_barplot(variants,x_string = "cancer", fill_string = "CharGer_Classification", 
-             fileName="PCA_PathVar_Classification_by_cancer_bar.pdf")
+# plot_barplot(variants,x_string = "cancer", fill_string = "Overall_Classification", 
+#              fileName="PCA_PathVar_Classification_by_cancer_bar.pdf")
 
 
 # Frequency plotting #
 # get non-redundant sample entry first
-variants = variants[order(variants$CharGer_Classification,decreasing = T),]
+variants = variants[order(variants$Overall_Classification,decreasing = T),]
 variants_uni = variants[!duplicated(variants$Sample),]
 
 # plot the bar plot of the counts
-all_count = as.data.frame(table(variants_uni$cancer,variants_uni$CharGer_Classification))
-colnames(all_count) = c("Cancer", "CharGer_Classification", "count")
+all_count = as.data.frame(table(variants_uni$cancer,variants_uni$Overall_Classification))
+colnames(all_count) = c("Cancer", "Overall_Classification", "count")
 all_count_m = merge(cancer_count, all_count, by="Cancer")
 all_count_m$freq = all_count_m$count/all_count_m$sample_size
-all_count_m$CharGer_Classification = factor(all_count_m$CharGer_Classification, levels = c("Pathogenic","Likely Pathogenic"))
-all_count_m = all_count_m[order(all_count_m$CharGer_Classification),]
+all_count_m$Overall_Classification = factor(all_count_m$Overall_Classification, levels = c("Pathogenic","Likely Pathogenic"))
+all_count_m = all_count_m[order(all_count_m$Overall_Classification),]
 
-cat("Number of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Pathogenic"]),"\n")
-cat("Additional number of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Likely Pathogenic"]),"\n")
+cat("Number of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$Overall_Classification=="Pathogenic"]),"\n")
+cat("Additional number of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$Overall_Classification=="Likely Pathogenic"]),"\n")
 
-cat("Percentage of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Pathogenic"]),"\n")
-cat("Additional percentage of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$CharGer_Classification=="Likely Pathogenic"])/sum(all_count_m$sample_size[all_count_m$CharGer_Classification=="Likely Pathogenic"]),"\n")
+cat("Percentage of pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$Overall_Classification=="Pathogenic"])/sum(all_count_m$sample_size[all_count_m$Overall_Classification=="Pathogenic"]),"\n")
+cat("Additional percentage of likely pathogenic variant carriers: ",sum(all_count_m$count[all_count_m$Overall_Classification=="Likely Pathogenic"])/sum(all_count_m$sample_size[all_count_m$Overall_Classification=="Likely Pathogenic"]),"\n")
 tn = "PCA.path.carrier_by_cancer.freq.tsv"
 write.table(all_count_m, quote=F, sep="\t", file = tn, row.names = F)
 
-all_count_m_sum = dcast(all_count_m, Cancer ~ CharGer_Classification, value.var="freq")
+all_count_m_sum = dcast(all_count_m, Cancer ~ Overall_Classification, value.var="freq")
 cancer_order = all_count_m_sum$Cancer[order(all_count_m_sum$Pathogenic, decreasing=TRUE)]
 
 all_count_m$Cancer = factor(all_count_m$Cancer, levels=cancer_order)
 all_count_m= all_count_m[all_count_m$freq !=0,]
-all_count_m$CharGer_Classification = factor(all_count_m$CharGer_Classification, levels=c("Likely Pathogenic","Pathogenic"))
+all_count_m$Overall_Classification = factor(all_count_m$Overall_Classification, levels=c("Likely Pathogenic","Pathogenic"))
 
-p = ggplot(all_count_m,aes(x = Cancer, y = freq*100, fill = CharGer_Classification))
+p = ggplot(all_count_m,aes(x = Cancer, y = freq*100, fill = Overall_Classification))
 p = p + geom_bar(stat = "identity") + theme_bw() + theme_nogrid() 
 p = p + labs(x = "Cancer Type", y="Percentage Carriers (%)")
 p = p + getVarFillScale()
@@ -96,7 +93,7 @@ p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(col
 p = p + theme(legend.position = "top")
 p
 fn = 'out/PCA_carrierFreq_by_cancer_bar.pdf'
-ggsave(file=fn, height = 6, width = 6, useDingbats=FALSE)
+ggsave(file=fn, height = 6, width = 6.5, useDingbats=FALSE)
 
 ##### compare counts to Lu et al. #####
 # lu et al. discovery strategy
@@ -134,6 +131,30 @@ p
 fn = 'out/previous_vs_novel_var_count.pdf'
 ggsave(file=fn, height = 6, width = 6, useDingbats=FALSE)
 
+sample_size_order = c(all_count_m$sample_size[all_count_m$Overall_Classification=="Pathogenic"][order(all_count_m$freq[all_count_m$Overall_Classification=="Pathogenic"],decreasing = T)],"45","80")
+all_count_m$sample_size = factor(all_count_m$sample_size, levels=sample_size_order)
+##### v2: vertical plotting #####
+p = ggplot(all_count_m,aes(x = Cancer, y = freq*100, fill = Overall_Classification))
+p = p + geom_bar(stat = "identity") + theme_bw() + theme_nogrid() 
+p = p + labs(x = "Cancer Type", y="Percentage Carriers (%)")
+p = p + getVarFillScale()
+p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(colour="black", size=10, angle = 90, vjust=0.5), axis.text.y = element_text(colour="black", size=12))#element_text(colour="black", size=14))
+p = p + theme(legend.position = "top")
+p = p + coord_flip() 
+p
+fn = 'out/PCA_carrierFreq_by_cancer_bar_vertical.pdf'
+ggsave(file=fn, height = 6, width = 6.5, useDingbats=FALSE)
+
+p = ggplot(both_counts_m,aes(x = cancer, y = value, fill = variable))
+p = p + geom_bar(stat = "identity") + theme_bw() + theme_nogrid() 
+p = p + labs(x = "Cancer Type", y="Pathogenic Variant Count")
+p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(colour="black", size=10, angle = 90, vjust=0.5), axis.text.y = element_text(colour="black", size=12))#element_text(colour="black", size=14))
+p = p + theme(legend.position = "top")
+p = p + coord_flip() 
+p
+fn = 'out/previous_vs_novel_var_count_verticle.pdf'
+ggsave(file=fn, height = 6, width = 6, useDingbats=FALSE)
+
 ##### heatmap: count of pathogenic variants by gene/cancer #####
 combined_sum_f_added = data.frame(table(variants$HUGO_Symbol, variants$cancer))
 colnames(combined_sum_f_added) = c("Gene","Cancer","Count")
@@ -144,21 +165,28 @@ combined_sum_f_added$Gene_Classification[combined_sum_f_added$Gene %in% all_TSGs
 
 top = table(variants$HUGO_Symbol)[order(table(variants$HUGO_Symbol),decreasing = T)]
 top5 = top[top>4]
-top_oncogenes = names(top[top>7])[names(top[top>7]) %in% all_oncogenes]
-top_TSGs = names(top[top>19])[names(top[top>19]) %in% all_TSGs]
-write(c(top_oncogenes,top_TSGs), "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/reference_files/PCA_feature_gene_list.txt", sep="\n")
+top_oncogenes = names(top[top>4])[names(top[top>4]) %in% all_oncogenes]
+top_TSGs = names(top[top>13])[names(top[top>13]) %in% all_TSGs]
+# write(c(top_oncogenes,top_TSGs), "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/reference_files/PCA_feature_gene_list.txt", sep="\n")
+# use the genes defined by burden analysis
+gene_fn = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/reference_files/PCA_feature_gene_list.txt"
+glist = as.vector(t(read.table(header=FALSE, stringsAsFactors = F, file = gene_fn)))
 
-combined_sum_f_added_g = combined_sum_f_added[combined_sum_f_added$Gene %in% c(top_oncogenes,top_TSGs),]
-combined_sum_f_added_g$Cancer = factor(combined_sum_f_added_g$Cancer, levels=cancer_order) # site from plot_classification_summary.R
+combined_sum_f_added_g = combined_sum_f_added[combined_sum_f_added$Gene %in% glist,]
+#combined_sum_f_added_g$Cancer = factor(combined_sum_f_added_g$Cancer, levels=cancer_order) # site from plot_classification_summary.R
+combined_sum_f_added_g$Gene = factor(combined_sum_f_added_g$Gene, levels = rev(gene_order))
 
 getPalette = colorRampPalette(c("#FFFFFF","#fed976","#e31a1c"))
+combined_sum_f_added_g$Count_plot = combined_sum_f_added_g$Count
+combined_sum_f_added_g$Count_plot[combined_sum_f_added_g$Count_plot>10]= 10
 
 p = ggplot(data=combined_sum_f_added_g)
-p = p + facet_grid(Gene_Classification~.,drop=T,scales = "free_y", space = "free_y")
-p = p + geom_tile(aes(x=Cancer, y=Gene, fill=Count), linetype="blank") + scale_fill_gradientn(name= "Count", colours=getPalette(100), na.value=NA, limit=c(0,NA))
+#p = p + facet_grid(Gene_Classification~.,drop=T,scales = "free_y", space = "free_y")
+p = p + geom_tile(aes(x=Cancer, y=Gene, fill=Count_plot), linetype="blank") + scale_fill_gradientn(name= "Count", colours=getPalette(100), na.value=NA, limit=c(0,NA))
 p = p + geom_text(aes(x=Cancer, y=Gene, label = Count), color="black", size=3)
 p = p  + theme_bw() + theme_nogrid() +
   theme(axis.title = element_text(size=16), axis.text.x = element_text(colour="black", size=12, angle=90, vjust = 0.5), axis.text.y = element_text(colour="black", size=12),axis.ticks = element_blank())#element_text(colour="black", size=14))
 p
 fn = 'out/PathVar_counts_ggroup_heatmap.pdf'
-ggsave(file=fn, height=6, width=7, useDingbats=FALSE)
+ggsave(file=fn, height=5, width=10, useDingbats=FALSE)
+

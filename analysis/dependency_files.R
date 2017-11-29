@@ -15,7 +15,7 @@ oncogenes = as.vector(t(read.table(header=F, stringsAsFactors = F, file=onco_fn)
 tsg_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/GSEA_geneLists/tumor_suppressors.txt"
 TSGs = as.vector(t(read.table(header=F, stringsAsFactors = F, file=tsg_fn)))
 
-additional_TSGs = c("ATR","BARD1","ERCC1","FANCI","FANCL","FANCM","POLD1","POLE","POLH","RAD50","RAD51","RAD51C","RAD51D","RAD54L")
+additional_TSGs = c("MAX","ATR","BARD1","ERCC1","FANCI","FANCL","FANCM","POLD1","POLE","POLH","RAD50","RAD51","RAD51C","RAD51D","RAD54L")
 others = c("ABCB11","ABCC2","AXIN2","CBL","CDKN1B","COL7A1","CYP17A1","CYP1B1","DIS3L2",
            "DKC1","DOCK8","ELANE","FAH","FLCN","GBA","GJB2","HFE","HMBS","LRRK2",
            "MAX","MTAP","MYD88"   
@@ -42,16 +42,33 @@ rtk_genes = as.vector(t(rtk_gene_f))
 
 # ##### all_variants #####
 
-fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated.tsv"
+# the new pathVar is already filtered
+fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered.tsv"
 pathVar = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=fn)
 
-pathVar$ExAC_assoc_P[pathVar$ExAC_adj_AF>=0.001] = NA # not considering anything above ExAC AF of 0.1%; doesn't matter
+# # swapped samples
+# swap_samples_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/variant_QC/out/tn_swap_samples.txt"
+# swap_samples = as.vector(t(read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=swap_samples_f)))
+# swapped = pathVar[pathVar$bcr_patient_barcode %in% swap_samples,]
+# swapped[,c("bcr_patient_barcode","HUGO_Symbol","HGVSp","Overall_Classification","normalRefCnt","normalAltCnt","normalVAF","tumorRefCnt","tumorAltCnt","tumorVAF")]
 
-# volg_fn = "/Users/khuang/Box\ Sync/PhD/proteogenomics/reference_files/Volgestin2013Science_125genes_class.txt"
-# volg_class = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=volg_fn)
-# colnames(volg_class) = c("gene_name","Gene_Classification","Pathway","Process")
-# pathVar = merge(pathVar,volg_class,by="gene_name",all.x=T)
-# pathVar$Gene_Classification[is.na(pathVar$Gene_Classification)]="TSG"
+# ### filter for filtered samples ###
+# s_c_list_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/sampleQC/pca_table.20171118.filtered.wclin.tsv"
+# sample_cancer = read.table(header=T, quote = "", sep="\t", file = s_c_list_f, stringsAsFactors=FALSE)
+# sample_cancer = sample_cancer[,c("bcr_patient_barcode", "cancer")]
+# pathVar = pathVar[pathVar$bcr_patient_barcode %in% sample_cancer$bcr_patient_barcode,]
+# 
+# pathVar$ExAC_assoc_P[pathVar$ExAC_adj_AF>=0.001] = NA # not considering anything above ExAC AF of 0.1%; doesn't matter
+# 
+# ##### filter for contanimation #####
+# # adjacent normal contamination --> check if these are the samples having low concordance
+# pathVar$normal_type = substr(pathVar$Sample,15,15)
+# pathVar = pathVar[!(pathVar$colocalized_somatic_mutation_count != 0 & !is.na(pathVar$normal_type) & pathVar$normal_type==1 & !is.na(pathVar$normalVAF) & pathVar$normalVAF < 0.3),]
+# 
+# # save after filtered 
+# fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered.tsv"
+# write.table(pathVar, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
+
 
 # some pre-processing
 
@@ -75,19 +92,14 @@ missenses = pathVarOT[pathVarOT$binary_type=="Missense",]
 
 pathVarFGene = pathVar[pathVar$HUGO_Symbol %in% featGenes,]
 
+pathVarP = pathVar[pathVar$Overall_Classification %in% c("Pathogenic","Likely Pathogenic"),]
 
-### combined classification ###
-table(pathVar$CharGer_Classification)
-table(pathVar$ACMG_Classification)
-table(pathVar$ClinVar_Pathogenicity)
+pathVarPOT = pathVarP[!is.na(pathVarP$Gene_Classification) & pathVarP$Gene_Classification != "None",]
 
-table(pathVar$ClinVar_Pathogenicity,pathVar$CharGer_Classification)
-table(pathVar$ACMG_Classification,pathVar$CharGer_Classification)
-table(pathVar$ClinVar_Pathogenicity,pathVar$ACMG_Classification)
+PCA_count = data.frame(table(pathVarP$HUGO_Symbol))
+colnames(PCA_count) = c("Gene","Count")
+gene_order = PCA_count$Gene[order(PCA_count$Count,decreasing = T)]
+##### clinical files #####
+clin_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/clinical/PanCan_ClinicalData_V4_wAIM_filtered10389.txt"
+clin = read.table(header=T, quote = "", sep="\t", fill =T, file = clin_f, stringsAsFactors=FALSE)
 
-pathVar$Overall_Classification = paste("CharGer",pathVar$CharGer_Classification)
-pathVar$Overall_Classification[pathVar$ClinVar_Pathogenicity=="Pathogenic"] = "Pathogenic"
-table(pathVar$Overall_Classification)
-pathVar$Overall_Classification[grep("PS1",pathVar$Positive_Evidence)] = "Pathogenic"
-table(pathVar$Overall_Classification)
-pathVar$CharGer_Classification = pathVar$Overall_Classification
