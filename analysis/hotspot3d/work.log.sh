@@ -33,16 +33,16 @@ bsubl -oo summary.log 'hotspot3d summary --clusters-file=PCA_somatic_germline_co
 
 #4. post processing: plotting
 # get presence
-perl ~/bin/hotspot3d_KH/scripts/clusterPDBPresence.pl canonical.combined.mc3.musites PCA_somatic_germline_combined_missense.maf.3D_Proximity.pairwise.recurrence.l0.r10.clusters
+perl ~/bin/hotspot3d_KH/scripts/clusterPDBPresence.pl 3D_Proximity.pairwise PCA_somatic_germline_combined_missense.maf.3D_Proximity.pairwise.recurrence.l0.r10.clusters PCA
 
 # plot some of the previous top candidates
 musite=canonical.combined.mc3.musites
-cluster=filtered.canonical.combined.mc3.mumu.musite.sitesite.ld0.ad10.r10.recur.strInd.subInd.unspec.clusters
+cluster=PCA_somatic_germline_combined_missense.maf.3D_Proximity.pairwise.recurrence.l0.r10.clusters
 
 # limit cluster file to clusters of interest first
 
 # visualize
-grep1 10153.0 ${cluster} > tmp.clusters
-hotspot3d visual --musites-file=${musite} --clusters-file=tmp.clusters --pdb=1QZJ --output-file=pml_scripts/filtered.0708.pass.1QZJ.KIT.pml --script-only 
-grep1 5699.1 ${cluster} > tmp.clusters
-hotspot3d visual --musites-file=${musite} --clusters-file=tmp.clusters --pdb=5CZH --output-file=pml_scripts/filtered.0708.pass.5CZH.EGFR.pml --script-only 
+grep1 245.0 ${cluster} > tmp.clusters
+hotspot3d visual --pairwise-file=3D_Proximity.pairwise --clusters-file=tmp.clusters --pdb=2IVT --output-file=pml_scripts/PCA.2IVT.RET.pml --script-only 
+grep1 245.0 ${cluster} > tmp.clusters
+hotspot3d visual --pairwise-file=3D_Proximity.pairwise --clusters-file=tmp.clusters --pdb=2X2M --output-file=pml_scripts/PCA.2X2M.RET.pml --script-only 
