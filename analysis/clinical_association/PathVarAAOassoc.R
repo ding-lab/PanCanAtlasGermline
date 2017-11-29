@@ -156,8 +156,10 @@ for (cancer in cancers){
     p = ggplot(data=pathVarP_clin_matrix_gc)
     p = p + facet_grid(. ~cancer)
     p = p + geom_violin(aes(x=carrier, y=age_at_initial_pathologic_diagnosis),alpha=0.5)
-    p = p + geom_jitter(aes(x=carrier, y=age_at_initial_pathologic_diagnosis, color=ifelse(carrier!="all",cancer,NA)), alpha = 0.8) #+ geom_point(aes(x=Status, y=value)) 
-    p = p + guides(fill=FALSE, color =FALSE) 
+    p = p + geom_jitter(aes(x=carrier, y=age_at_initial_pathologic_diagnosis, color=ifelse(carrier!="all",cancer,NA)), alpha = 0.8,stroke=0, size=2, width = .2, height = 0) #+ geom_point(aes(x=Status, y=value)) 
+    p = p + stat_summary(aes(x=carrier, y=age_at_initial_pathologic_diagnosis),fun.y = median, fun.ymin = median, fun.ymax = median,
+                         geom = "crossbar", width = 0.8)
+    p = p + guides(fill=FALSE, color =FALSE)  + ylim(17,90)
     p = p + scale_colour_manual(values = col_vector)
     p = p + labs(x = "", y = "Age at onset") + theme_bw()
     p = p + theme(text = element_text(colour="black", size=16), axis.text.x = element_text(colour="black", size=14), 

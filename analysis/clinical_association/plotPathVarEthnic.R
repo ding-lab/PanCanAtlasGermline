@@ -95,4 +95,18 @@ p = p + scale_fill_manual(values =  c("#d9d9d9","#fc9272","#bcbddc",brewer.pal(l
 p = p + theme(axis.title = element_text(size=16), axis.text.x = element_text(colour="black", size=14,angle=90, vjust=0.5), axis.text.y = element_text(colour="black", size=14))#element_text(colour="black", size=14))
 p
 fn = 'out/PathVarCarrierByEthniOther.pdf'
-ggsave(file=fn, height=6, width=15, useDingbats=FALSE)
+ggsave(file=fn, height=7, width=18, useDingbats=FALSE)
+
+count.F_25_go$CarrierCountPlot = as.numeric(count.F_25_go$CarrierCount)
+count.F_25_go$CarrierCountPlot[count.F_25_go$CarrierCountPlot>5] = 5
+p = ggplot(count.F_25_go,aes(x=Cohort_num, y=Gene, colour=Gene, size =as.numeric(CarrierCountPlot)))# make this the original ethni
+p = p + facet_grid(.~Cancer, drop=T, space = "free_x",scales = "free_x")#, space = "free", scales = "free")
+p = p + geom_point() + theme_bw() + theme_nogrid()
+p = p + labs(x = "", y="Number of carriers")
+#p = p + scale_colour_manual(values =  c(brewer.pal(length(unique(count.F_25_go$Ethnicity)),"Set1")))
+#p = p + scale_colour_manual(values =  c(col_vector[1:(length(unique(count.F_25_g$Gene))+1)]))#brewer.pal(length(unique(count.F_25_g$Gene)),"Set3"))
+p = p + scale_colour_manual(values =  c("#d9d9d9","#fc9272","#bcbddc",brewer.pal(length(unique(count.F_25$Gene))-1,"Paired")))
+p = p + theme(axis.title = element_text(size=16), axis.text.x = element_text(colour="black", size=14,angle=90, vjust=0.5), axis.text.y = element_text(colour="black", size=14))#element_text(colour="black", size=14))
+p
+fn = "out/PathVarCarrierByEthniOtherBubble.pdf"
+ggsave(file=fn, height=7, width=18, useDingbats=FALSE)
