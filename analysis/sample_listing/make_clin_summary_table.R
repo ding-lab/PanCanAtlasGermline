@@ -5,21 +5,21 @@
 setwd("/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/analysis/sample_listing")
 source("../global_aes_out.R")
 
-clin_f = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/clinical/PanCan_ClinicalData_V4_20170428.txt"
+clin_f = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/clinical/PanCan_ClinicalData_V4_wAIM_filtered10389.txt"
 clin_full = read.table(header=T, quote = "", sep="\t", fill =T, file = clin_f, stringsAsFactors=FALSE)
 clin = clin_full[,c("bcr_patient_barcode", "type","age_at_initial_pathologic_diagnosis","gender","race")]
 colnames(clin) = c("sample","cancer","age_at_onset","gender","ethnicity")
 
 clin$ethnicity[clin$ethnicity %in% c("","[Not Available]","[Not Evaluated]","[Unknown]")]=NA
-sample_cancer_clin$gender[sample_cancer_clin$gender==""]=NA
 
-s_c_list_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/sampleQC/pca_table.20171019.wclin.tsv"
+s_c_list_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/sampleQC/pca_table.20171118.filtered.wclin.tsv"
 sample_cancer = read.table(header=T, quote = "", sep="\t", file = s_c_list_f, stringsAsFactors=FALSE)
 sample_cancer = sample_cancer[,c("bcr_patient_barcode", "cancer")]
 colnames(sample_cancer) = c("sample","cancer")
 
 sample_cancer_clin = merge(sample_cancer,clin, by = c("sample","cancer"), all.x =T)
 mean(sample_cancer_clin$age_at_onset, na.rm=T)
+sample_cancer_clin$gender[sample_cancer_clin$gender==""]=NA
 
 cancer_count = data.frame(table(data = sample_cancer_clin$cancer ))
 cancer_ethni_count = as.data.frame(table(sample_cancer_clin$cancer,sample_cancer_clin$ethnicity))
