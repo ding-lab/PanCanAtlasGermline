@@ -20,6 +20,8 @@ class autovivification(dict):
             value = self[item] = type(self)()
             return value
 
+## this unused section of the code is from the Dream Challenge
+## and can handle some SV matching
 #!/usr/bin/env python
 
 
