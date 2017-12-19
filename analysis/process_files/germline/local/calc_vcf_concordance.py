@@ -101,7 +101,7 @@ def evaluate(submission, truth, sampleMatch=False):
     validated = 0
     unvalidated = 0
     unvalidated_by_type = {}
-    mistmatch_types = ["CALLED_0/1;GENOTYPE_0/0" ,"CALLED_0/1;GENOTYPE_1/1", "CALLED_1/1;GENOTYPE_0/0","CALLED_1/1;GENOTYPE_0/1"]
+    mismatch_types = ["CALLED_0/1;GENOTYPE_0/0" ,"CALLED_0/1;GENOTYPE_1/1", "CALLED_1/1;GENOTYPE_0/0","CALLED_1/1;GENOTYPE_0/1"]
 
     ''' store list of truth records, otherwise the iterator needs to be reset '''
     for trurec in truvcfh:
@@ -170,17 +170,17 @@ def evaluate(submission, truth, sampleMatch=False):
                         sample_unvalidated[sampleID][mismatch_GT] = 1
                 else: 
                     sample_unvalidated[sampleID][mismatch_GT] = 1
-                #print "Mistmatched: " + sampleID + " CALLED: " + genotype + " vs. GENOTYPE: " + truGenotype
+                #print "mismatched: " + sampleID + " CALLED: " + genotype + " vs. GENOTYPE: " + truGenotype
 
     outFH.write("Sample\tValidated_count\tCALLED_0/1;GENOTYPE_0/0\tCALLED_0/1;GENOTYPE_1/1\tCALLED_1/1;GENOTYPE_0/0\tCALLED_1/1;GENOTYPE_0/1\n")
     # iterate through samples and print their validated; unvalidated; chr
     for sampleID in sample_validated:
             outString = sampleID + "\t" + str(sample_validated[sampleID])
             outFH.write(outString)  
-            for mistmatch_type in mistmatch_types:
+            for mismatch_type in mismatch_types:
                 mismatch_string = "\t"  
                 unvalidated_count = str(0)
-                if sampleID in sample_unvalidated and mistmatch_type in sample_unvalidated[sampleID]:
+                if sampleID in sample_unvalidated and mismatch_type in sample_unvalidated[sampleID]:
                     unvalidated_count = str(sample_unvalidated[sampleID][mismatch_type])
                 mismatch_string = mismatch_string + unvalidated_count
                 outFH.write(mismatch_string)
