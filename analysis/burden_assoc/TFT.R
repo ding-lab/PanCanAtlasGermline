@@ -52,7 +52,7 @@ run_TFT_against_others = function(data_c, PCA_count_byCancer, all_cancer_stat_m_
     gene = unique(data_c$Gene)[i]
     
     sig_cancers = all_cancer_stat_m_suggest$Cancer[all_cancer_stat_m_suggest$Gene==gene]
-    data_other_c = PCA_count_byCancer[!(PCA_count_byCancer$Cancer %in% c(sig_cancers,cancer)),]
+    data_other_c = PCA_count_byCancer[!(PCA_count_byCancer$Cancer %in% c(sig_cancers,as.character(cancer))),]
     
     data_other_c_g = data_other_c[data_other_c$Gene == gene,]
     #data_c_g = data_c[data_c$gene_symbol==gene,]

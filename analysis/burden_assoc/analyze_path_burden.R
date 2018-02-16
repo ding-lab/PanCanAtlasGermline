@@ -43,12 +43,12 @@ variants_cancerP_gsum$Freq = variants_cancerP_gsum$Count/variants_cancerP_gsum$S
 variants_cancerPinPCA_gsum$Freq = variants_cancerPinPCA_gsum$Count/variants_cancerPinPCA_gsum$Sample_size
 PCA_count = data.frame(table(pathVarP$HUGO_Symbol))
 colnames(PCA_count) = c("Gene","Count")
-PCA_count$Sample_size = 10467
+PCA_count$Sample_size = 10389
 PCA_count$Cancer = "TCGA"
 PCA_count$Freq = PCA_count$Count/PCA_count$Sample_size
 
 # compile by cancer type table
-sample_size = data.frame(table(sample_cancer$cancer))
+sample_size = data.frame(table(clin$type))
 colnames(sample_size) = c("Cancer","Sample_size")
 PCA_count_byCancer = data.frame(table(pathVarP$HUGO_Symbol,pathVarP$cancer))
 colnames(PCA_count_byCancer) = c("Gene","Cancer","Count")
