@@ -129,7 +129,14 @@ rtk_genes = as.vector(t(rtk_gene_f))
 # pathVar$Overall_Classification[pathVar$HGVSp %in% c("ENSP00000466090:p.G210W","ENSP00000314508:p.R502C")] = "Prioritized VUS"
 # 
 # table(pathVar$Overall_Classification)
+
+# #  Update frequency in selected cases
+# pathVar$ExAC_adj_AF_Manual[pathVar$HGVSp == "ENSP00000363822:p.R727L"] = 0.0007686
+# pathVar = pathVar[is.na(pathVar$ExAC_adj_AF_Manual) | pathVar$ExAC_adj_AF_Manual< 0.0005,]
 # 
+# # update frequency using general ExAC MAF
+# pathVar = pathVar[is.na(as.numeric(gsub(".*:","",pathVar$ExAC_MAF))) | as.numeric(gsub(".*:","",pathVar$ExAC_MAF))<0.001,]
+#                     
 # fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
 # write.table(pathVar, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
 
