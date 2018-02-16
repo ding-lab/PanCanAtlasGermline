@@ -7,7 +7,7 @@ setwd(bdir)
 source("../global_aes_out.R")
 source("../dependency_files.R")
 
-p = ggplot(pathVarOT,aes(x=0,y=expressionQuantile, fill=binary_type))
+p = ggplot(pathVarPOT,aes(x=0,y=expressionQuantile, fill=binary_type))
 p = p + facet_grid(.~Gene_Classification, scale = "free", space = "free", drop=T)
 p = p + geom_dotplot(dotsize=0.4,binwidth=.015, binaxis= "y")#,stackdir ="centerwhole")
 p = p + theme_bw() 
@@ -22,10 +22,12 @@ p
 fn = "out/pathVarExpression.pdf"
 ggsave(file=fn, w=7, h=6,useDingbats=FALSE)
 
-pathVarFGene =pathVarFGene[!is.na(pathVarFGene$binary_type),]
-p = ggplot(pathVarFGene,aes(x=HUGO_Symbol,y=expressionQuantile, fill=binary_type))
+pathVarFGeneP = pathVarPOT[!is.na(pathVarPOT$binary_type) & pathVarPOT$HUGO_Symbol %in% featGenes,]
+
+p = ggplot(pathVarFGeneP,aes(x=HUGO_Symbol,y=expressionQuantile, fill=binary_type))
 p = p + facet_grid(.~Gene_Classification, scale = "free", space = "free", drop=T)
 p = p + geom_dotplot(dotsize=1.2,binwidth=.01, binaxis= "y",colour=NA,stackdir ="centerwhole")
+p = p + geom_text(aes(label=ifelse(Gene_Classification=="Oncogene" & expressionQuantile>0.9, gsub("p.","",HGVSp_short),NA)),size=2.5)
 p = p + theme_bw() 
 p = p + ylab("mRNA Expression Quantile") + xlab("Gene with Germline Variant")
 p = p + scale_y_continuous(breaks = seq(0,1, by= 0.25))
