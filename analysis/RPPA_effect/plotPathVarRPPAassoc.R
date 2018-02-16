@@ -2,10 +2,10 @@
 # Kuan-lin Huang @ WashU 2016 August updated 2017
 # conduct association of pathVarPline variants with AAO
 
-bdir = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/expression_effect"
+bdir = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/RPPA_effect"
 setwd(bdir)
-# source("../global_aes_out.R")
-# source("../dependency_files.R")
+source("../global_aes_out.R")
+source("../dependency_files.R")
 
 getPCACancerColor = function() {
   # according to google spreadsheet: https://docs.google.com/spreadsheets/d/1Nb9mMkonAhZR1_2OI9nv4ylCei0LZjAf-2vYTRQcXKw/edit#gid=1704872109
@@ -118,4 +118,18 @@ p = p  + theme_bw() +
   theme(axis.text.x = element_text(colour="black", size=12), axis.text.y = element_text(colour="black", size=12),axis.ticks = element_blank())#element_text(colour="black", size=14))
 p
 fn = 'out/geneExpressAssocVolcanoWCOX.pdf'
+ggsave(fn,w = 5, h = 5, useDingbat=F)
+
+# using the Wilcox test result: plot by gene
+p = ggplot(data=tt,aes(x=coefficient,y=cancer,color = cancer))
+# p = p + geom_point(aes(y=-log10(wilcoxFDR),x= coefficient,color = cancer),alpha=0.5)
+p = p + geom_point(aes(size=-log10(FDR)))
+p = p + geom_text_repel(aes(label=ifelse(FDR<0.05,marker,NA)))
+p = p + getPCACancerColor()
+p = p + labs(x="Coefficient",y= "-log10(FDR)")
+p = p + geom_vline(xintercept = 0, alpha=0.5) + xlim(-1.6,1.6)
+p = p  + theme_bw() +
+  theme(axis.text.x = element_text(colour="black", size=12), axis.text.y = element_text(colour="black", size=12),axis.ticks = element_blank())#element_text(colour="black", size=14))
+p
+fn = 'out/geneExpressAssocVolcanoWCOX_bygene.pdf'
 ggsave(fn,w = 5, h = 5, useDingbat=F)

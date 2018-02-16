@@ -20,6 +20,7 @@ pathVarP_RPPA_fg = pathVarP_RPPA_fg[!is.na(pathVarP_RPPA_fg$binary_type),]
 p = ggplot(pathVarP_RPPA_fg,aes(x=marker,y=quantile, fill=binary_type))
 p = p + facet_grid(.~Gene_Classification, scale = "free", space = "free", drop=T)
 p = p + geom_dotplot(dotsize=1.2,binwidth=.01, binaxis= "y",colour=NA,stackdir ="centerwhole")
+p = p + geom_text(aes(label=ifelse(Gene_Classification=="Oncogene" & quantile>0.75, gsub("p.","",HGVSp_short),NA)),size=2.5)
 p = p + theme_bw() 
 p = p + ylab("RPPA Expression Quantile") + xlab("Protein with Germline Variant")
 p = p + scale_y_continuous(breaks = seq(0,1, by= 0.25))
