@@ -176,7 +176,7 @@ getPCACancerFill = function() {
 
 getVarColorScale = function() {
   colors = c(NA, "#b2182b", "#2166ac") #positive is dark grey       
-  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
+  color.names = c("Prioritized VUS","Pathogenic","Likely Pathogenic")
   names(colors) = color.names
   clinical.color.scale = scale_color_manual(name="Variant Classification", values=colors)
   return(clinical.color.scale)
@@ -184,7 +184,7 @@ getVarColorScale = function() {
 
 getVarColorScale2 = function() {
   colors = c("#252525", "#b2182b", "#2166ac") #positive is dark grey       
-  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
+  color.names = c("Prioritized VUS","Pathogenic","Likely Pathogenic")
   names(colors) = color.names
   clinical.color.scale = scale_color_manual(name="Variant Classification", values=colors)
   return(clinical.color.scale)
@@ -192,7 +192,7 @@ getVarColorScale2 = function() {
 
 getVarFillScale = function() {
   colors = c(NA, "#b2182b", "#2166ac") #positive is dark grey       
-  color.names = c("Uncertain Significance","Pathogenic","Likely Pathogenic")
+  color.names = c("Prioritized VUS","Pathogenic","Likely Pathogenic")
   names(colors) = color.names
   clinical.color.scale = scale_fill_manual(name="Variant Classification", values=colors)
   return(clinical.color.scale)

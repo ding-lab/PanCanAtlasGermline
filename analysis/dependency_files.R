@@ -15,7 +15,7 @@ oncogenes = as.vector(t(read.table(header=F, stringsAsFactors = F, file=onco_fn)
 tsg_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/GSEA_geneLists/tumor_suppressors.txt"
 TSGs = as.vector(t(read.table(header=F, stringsAsFactors = F, file=tsg_fn)))
 
-additional_TSGs = c("MAX","ATR","BARD1","ERCC1","FANCI","FANCL","FANCM","POLD1","POLE","POLH","RAD50","RAD51","RAD51C","RAD51D","RAD54L")
+additional_TSGs = c("MAX","SDHA","ATR","BARD1","ERCC1","FANCI","FANCL","FANCM","POLD1","POLE","POLH","RAD50","RAD51","RAD51C","RAD51D","RAD54L")
 others = c("ABCB11","ABCC2","AXIN2","CBL","CDKN1B","COL7A1","CYP17A1","CYP1B1","DIS3L2",
            "DKC1","DOCK8","ELANE","FAH","FLCN","GBA","GJB2","HFE","HMBS","LRRK2",
            "MAX","MTAP","MYD88"   
