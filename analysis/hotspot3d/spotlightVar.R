@@ -7,9 +7,34 @@ setwd(bdir)
 source("../global_aes_out.R")
 source("../dependency_files.R")
 
+# check if there is statistical enrichment of overlaps
+# $ awk -F'\t' 'BEGIN{SUM=0}{ SUM+=$3-$2 }END{print SUM}' all_CDS_and_ncRNA_24Chroms_Contigs_1BasedStart_2bpFlanks_ForMusic_merged
+# 49586385
+exonSize = 49586385
+nPath = nrow(pathVarP)
+
+### somatic mutation
+# $ gzcat /Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/somatic/mc3.v0.2.8.PUBLIC.maf.gene_vclass_HGVSp_sample.gz | cut -f1,4 | sort | uniq -c | awk '$1 >2 && $3 != "."' | wc -l
+# 68537
+numSomaticOverlap = nrow(pathVarP[pathVarP$colocalized_somatic_mutation_count > 2,])
+somaticMutRate = 68537/exonSize  
+poisson.test(numSomaticOverlap, T = nPath, r = somaticMutRate, conf.level = 0.95, alternative = "greater")
+
+### PCGP germ var
+# /charged.2015_stJude_germline_nejm_S4_AD_varOnly.vep.tsv 
+# 551 /Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/analysis/pathogenic_variants/PCGP/charged.2015_stJude_germline_nejm_S4_AD_varOnly.vep.tsv
+# vpn-10-1-24-5:analysis khuang$ wc -l /Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/pathogenic_variants/PCGP/charged.2015_stJude_germline_nejm_S4_AR_varOnly.vep.tsv 
+# 239 /Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/analysis/pathogenic_variants/PCGP/charged.2015_stJude_germline_nejm_S4_AR_varOnly.vep.tsv
+
+numPCGPOverlap = nrow(pathVarP[pathVarP$PCGP,])
+pcgpMutRate = (551 + 239)/exonSize
+poisson.test(numPCGPOverlap, T = nPath, r = pcgpMutRate, conf.level = 0.95, alternative = "greater")
+
+# write file
 pathVarP_hot = pathVarP[pathVarP$colocalized_somatic_mutation_count > 2 | pathVarP$PCGP,]
 write.table(file = "out/colocalize_var.tsv", pathVarP_hot,quote=F, sep = '\t',row.names = F)
 
+# plot
 pathVarPOT_hot = pathVarPOT[pathVarPOT$colocalized_somatic_mutation_count > 2 | pathVarPOT$PCGP,]
 table(pathVarPOT_hot$HUGO_Symbol)
 pathVarPOT_hot$somatic_count_plot = pathVarPOT_hot$colocalized_somatic_mutation_count
