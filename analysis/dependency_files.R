@@ -144,6 +144,11 @@ rtk_genes = as.vector(t(rtk_gene_f))
 fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
 pathVar = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=fn)
 
+# fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted_path.tsv"
+# write.table(pathVar[pathVar$Overall_Classification %in% c("Pathogenic","Likely Pathogenic"),], file=fn, quote=F, sep="\t", col.names=T, row.names=F)
+# fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted_pVUS.tsv"
+# write.table(pathVar[pathVar$Overall_Classification %in% c("Prioritized VUS"),], file=fn, quote=F, sep="\t", col.names=T, row.names=F)
+
 ##### subsets #####
 pathVarOT = pathVar[!is.na(pathVar$Gene_Classification) & pathVar$Gene_Classification != "None",]
 
