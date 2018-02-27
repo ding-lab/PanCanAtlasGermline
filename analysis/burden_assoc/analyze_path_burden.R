@@ -22,8 +22,21 @@ cat("Frequency of carriers (Pathogenic only):",sum(variants_cancerP$ExAC_nonTCGA
 
 variants_cancerPinPCA = variants_cancerP[variants_cancerP$HGVSg %in% pathVarP$HGVSg,]
 cat("Number of Pathogenic variants that are cancer-relevant overlapping PCA TCGA discovery:",sum(variants_cancerPinPCA$ExAC_nonTCGA_AC_Adj),"\n")
-cat("Frequency of carriers:",sum(variants_cancerPinPCA$ExAC_nonTCGA_AC_Adj)/53105,"\n") #Frequency of carriers: 0.01835985
+cat("Frequency of carriers:",sum(variants_cancerPinPCA$ExAC_nonTCGA_AC_Adj)/53105,"\n") 
 cat("Frequency of carriers (Pathogenic only):",sum(variants_cancerPinPCA$ExAC_nonTCGA_AC_Adj[variants_cancerPinPCA$Overall_Classification=="Pathogenic"])/53105,"\n") #Frequency of carriers: 0.01835985
+
+rahmanGenes_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/Rahman_KJ_KH_gene_table.txt"
+rahmanGenes = as.vector(t(read.table(header=F, stringsAsFactors = F, file=rahmanGenes_fn,fill=T)[-1,1]))
+
+mdaccGenes_fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/MDACC/PCA_pathVar_integrated_filtered_adjusted/MDACC_genes.txt"
+mdaccGenes = as.vector(t(read.table(header=F, stringsAsFactors = F, file=mdaccGenes_fn)))
+
+cat("Intersected genes between 201 MDACC genes and Rahman genes","\n")
+intersect(rahmanGenes, mdaccGenes)
+
+variants_cancerPinPCA_mdaccGenes = variants_cancerPinPCA[variants_cancerPinPCA$HUGO_Symbol %in% mdaccGenes,]
+cat("Number of Pathogenic variants that are cancer-relevant overlapping PCA TCGA discovery in MDACC genes:",sum(variants_cancerPinPCA_mdaccGenes$ExAC_nonTCGA_AC_Adj),"\n")
+cat("Frequency of carriers:",sum(variants_cancerPinPCA_mdaccGenes$ExAC_nonTCGA_AC_Adj)/53105,"\n") 
 
 # tn = "out/ExAC_nonTCGA_inPCA_cancer_pathogenic.tsv"
 # write.table(variants_cancerPinPCA, quote=F, sep="\t", file = tn, row.names = F)
