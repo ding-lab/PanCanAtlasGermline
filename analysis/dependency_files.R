@@ -140,9 +140,42 @@ rtk_genes = as.vector(t(rtk_gene_f))
 # fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
 # write.table(pathVar, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
 
+# # Allelic specific LOH classification module
+# # take somatic CNVs instead!
+# CNV_file = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/CNV/all_data_by_genes_whitelisted_PCA_genes.tsv"
+# CNV = read.table(sep="\t",header=T,file=CNV_file, stringsAsFactors=FALSE, quote = "")
+# 
+# CNV_thres_file = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/CNV/all_thresholded.by_genes_whitelisted_PCA_genes.tsv"
+# CNV_thres = read.table(sep="\t",header=T,file=CNV_thres_file, stringsAsFactors=FALSE, quote = "")
+# 
+# CNV_m = melt(CNV[,-c(2:3)])
+# colnames(CNV_m) = c("HUGO_Symbol","CNV_sample","CNV_value")
+# CNV_m$CNV_sample = gsub("\\.","-",CNV_m$CNV_sample)
+# CNV_m$bcr_patient_barcode = substr(CNV_m$CNV_sample, 1, 12)
+# 
+# CNV_thres_m = melt(CNV_thres[,-c(2:3)])
+# colnames(CNV_thres_m) = c("HUGO_Symbol","CNV_sample","CNV_thres")
+# CNV_thres_m$CNV_sample = gsub("\\.","-",CNV_thres_m$CNV_sample)
+# CNV_thres_m$bcr_patient_barcode = substr(CNV_thres_m$CNV_sample, 1, 12)
+# 
+# pathVar_array = merge(pathVar,CNV_m,by=c("bcr_patient_barcode","HUGO_Symbol"),all.x=T)
+# pathVar_array = merge(pathVar_array,CNV_thres_m,by=c("bcr_patient_barcode","HUGO_Symbol"),all.x=T)
+# 
+# fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
+# write.table(pathVar_array, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
+
 # the new pathVar is already filtered, tn_swap adjusted
 fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
 pathVar = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=fn)
+
+# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant")] = "Unclassified LOH"
+# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres < 0 &
+#                         pathVar$tumorVAF > pathVar$normalVAF] = "Copy Number Deletion of WT Allele"
+# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres > 0 &
+#                         pathVar$tumorVAF > pathVar$normalVAF] = "Copy Number Amplification of Variant Allele"
+# 
+# fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
+# write.table(pathVar, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
 
 # fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted_path.tsv"
 # write.table(pathVar[pathVar$Overall_Classification %in% c("Pathogenic","Likely Pathogenic"),], file=fn, quote=F, sep="\t", col.names=T, row.names=F)
