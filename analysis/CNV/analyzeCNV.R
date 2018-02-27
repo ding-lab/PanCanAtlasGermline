@@ -49,7 +49,7 @@ p + theme_bw() + geom_vline(xintercept = 0, alpha=0.5) + getPCACancerColor()+ yl
 fn = 'out/SNParray_CNV_qt_assocGene.pdf'
 ggsave(file=fn, useDingbats=FALSE)
 
-p = ggplot(array_cnv[array_cnv$CNV == "Deletion",],aes(x=associated, y =qt, fill = associated))
+p = ggplot(array_cnv[array_cnv$CNV == "DEL",],aes(x=associated, y =qt, fill = associated))
 #p = p + geom_jitter(aes(color = associated), alpha=0.1,shape=19, height=0)#, scale = "free", space = "free", drop=T)
 p = p + geom_violin(alpha=0.2)
 p = p + geom_text_repel(aes(label=ifelse(associated,paste(cancer,gene),NA)))
@@ -76,6 +76,16 @@ p + theme_bw() + geom_vline(xintercept = 0, alpha=0.5)+ getPCACancerColor() + yl
 fn = 'out/xhmm_CNV_qt_assocGene.pdf'
 ggsave(file=fn, useDingbats=FALSE)
 
+p = ggplot(xhmm_cnv[xhmm_cnv$CNV == "DEL",],aes(x=associated, y =qt, fill = associated))
+#p = p + geom_jitter(aes(color = associated), alpha=0.1,shape=19, height=0)#, scale = "free", space = "free", drop=T)
+p = p + geom_violin(alpha=0.2)
+p = p + geom_text_repel(aes(label=ifelse(associated,paste(cancer,gene),NA)))
+p = p + ggtitle("Copy number deletions (WES)")
+p = p + theme_bw() + geom_vline(xintercept = 0, alpha=0.5)+ ylim(0,1) + labs(x="Associated cancer-gene pair", y="Expression quantile")
+p + theme(legend.position = "none")
+fn = 'out/xhmm_CNV_qt_deletion.pdf'
+ggsave(file=fn, useDingbats=FALSE)
+
 ##### combined counts #####
 colnames(array_cnv)[colnames(array_cnv)=="seg_mean"] = "CNV_value"
 colnames(xhmm_cnv)[colnames(xhmm_cnv)=="MEAN_RD"] = "CNV_value"
@@ -86,8 +96,8 @@ xhmm_cnv_sele = xhmm_cnv[xhmm_cnv$associated !=F & xhmm_cnv$CNV == "DEL" & xhmm_
 xhmm_cnv_sele$detection = "Whole-exome sequencing"
 cnv_sele = rbind(array_cnv_sele,xhmm_cnv_sele)
 
-tn = "out/cnv_ontarget_TSG_dele.txt"
-write.table(cnv_sele, quote=F, sep="\t", file = tn, row.names = F)
+# tn = "out/cnv_ontarget_TSG_dele.txt"
+# write.table(cnv_sele, quote=F, sep="\t", file = tn, row.names = F)
 
 cnv_sele_count = data.frame(table(cnv_sele$gene,cnv_sele$cancer,cnv_sele$detection))
 colnames(cnv_sele_count) = c('gene',"cancer","detection","count")
@@ -100,7 +110,7 @@ p = p + geom_point(aes(size=count)) #+ scale_size_area()
 p = p + theme_bw() + labs(x="Associated cancer-gene pair", y="Expression quantile")+ getPCACancerFill()
 p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(colour="black", size=10, angle = 90, vjust=0.5), axis.text.y = element_text(colour="black", size=12))
 p #+ theme(legend.position = "none")
-fn = 'out/both_CNV_qt_deletion.pdf'
+fn = 'out/both_CNV_qt_deletion_compare.pdf'
 ggsave(file=fn,h=3,w=5, useDingbats=FALSE)
 
 p = ggplot(cnv_sele,aes(x=CNV_value, y =qt, color=cancer))
