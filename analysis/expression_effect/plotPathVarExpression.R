@@ -7,6 +7,27 @@ setwd(bdir)
 source("../global_aes_out.R")
 source("../dependency_files.R")
 
+truncations = pathVarP[!is.na(pathVarP$binary_type) & pathVarP$binary_type=="Truncation" & !is.na(pathVarP$expressionQuantile),]
+truncGenes = names(table(truncations$HUGO_Symbol)[table(truncations$HUGO_Symbol)>5])
+
+geneLowExpCount = data.frame(table(truncations$expressionQuantile[truncations$HUGO_Symbol %in% truncGenes] < 0.25,truncations$HUGO_Symbol[truncations$HUGO_Symbol %in% truncGenes]))
+colnames(geneLowExpCount) = c("Bottom25","Gene","Count")
+sig_gene_order = geneLowExpCount$Gene[order(geneLowExpCount$Count,decreasing = T)]
+geneLowExpCount$Gene = factor(geneLowExpCount$Gene, levels = sig_gene_order)
+geneLowExpCount$Bottom25[!geneLowExpCount$Bottom25] = ""
+
+p = ggplot(geneLowExpCount,aes(x = Gene, y = Count, fill = Bottom25))
+p = p + geom_bar(stat = "identity") + theme_bw() + theme_nogrid() 
+p = p + labs(x = "Gene", y="Count of variants")
+#p = p + getLOHFillScale2()
+p = p + theme(axis.title = element_text(size=12), axis.text.x = element_text(colour="black", size=10, angle = 90, vjust=0.5), axis.text.y = element_text(colour="black", size=12))#element_text(colour="black", size=14))
+p = p + theme(legend.position = "top")
+p
+fn = 'out/LOH_CNV_var_count_by_gene.pdf'
+ggsave(file=fn, height = 5, width = 5, useDingbats=FALSE)
+
+###
+
 p = ggplot(pathVarPOT,aes(x=0,y=expressionQuantile, fill=binary_type))
 p = p + facet_grid(.~Gene_Classification, scale = "free", space = "free", drop=T)
 p = p + geom_dotplot(dotsize=0.4,binwidth=.015, binaxis= "y")#,stackdir ="centerwhole")
