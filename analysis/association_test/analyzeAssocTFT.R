@@ -5,7 +5,7 @@ setwd("/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/associa
 source("../global_aes_out.R")
 source("TFT_functions.R")
 
-fn = "ExAC.r1.sites.vep.biallelic.combine.fisher.anno.v2.152gene.tsv"  
+fn = "assoc_results/ExAC.r1.sites.vep.biallelic.combine.fisher.NFE.152gene.tsv"  
 data = read.table( fn, sep="\t",  head=T, fill=T,stringsAsFactors = F)
 
 ##### data annotating #####
@@ -38,7 +38,7 @@ data$HGVSpAbbre = gsub(".*:","",data$HGVSp)
 data_sig = data[data$P < 0.00001 & data$ExAC_AC/data$ExAC_AN < 0.01 & !data$multi_allele,]
 
 plot_top_counts(data_sig, n=30,x_string="gene_symbol",fill_string="variant_type")
-fn = "out/152gene.p0.00001.dis.top30gene.pdf"
+fn = "out/NFE_152gene.p0.00001.dis.top30gene.pdf"
 ggsave(file=fn, height=5,w=10, useDingbats=FALSE)
 
 sele_genes = c("BRCA1","BRCA2","ATM","PALB2","BRIP1","MSH6","FANCI","FANCM")
@@ -50,31 +50,31 @@ p = p + labs(x = "Gene", y = "-log10(P)") + theme_bw()
 p = p + theme(text = element_text(colour="black", size=16), axis.text.x = element_text(colour="black", size=14),
               axis.text.y = element_text(colour="black", size=14))
 p
-fn = "out/seleGene.var.sig.pdf"
+fn = "out/NFE_seleGene.var.sig.pdf"
 ggsave(file=fn, height=10,w=10,useDingbats=FALSE)
 
 ##### burden test #####
-truncation = data[data$variant_type=="truncation" & !data$multi_allele,]
-run_plot_burden(truncation, AF_thres=0.01)
-run_plot_burden(truncation, AF_thres=0.0001)
+NFE_truncation = data[data$variant_type=="truncation" & !data$multi_allele,]
+run_plot_burden(NFE_truncation, AF_thres=0.01)
+run_plot_burden(NFE_truncation, AF_thres=0.0001)
 
-truncation_noMulti = data[data$variant_type=="truncation" & !data$multi_allele,]
-run_plot_burden(truncation_noMulti, AF_thres=0.01)
-run_plot_burden(truncation_noMulti, AF_thres=0.0001)
+NFE_truncation_noMulti = data[data$variant_type=="truncation" & !data$multi_allele,]
+run_plot_burden(NFE_truncation_noMulti, AF_thres=0.01)
+run_plot_burden(NFE_truncation_noMulti, AF_thres=0.0001)
 
-missense = data[data$variant_type=="missense" & !data$multi_allele,]
-run_plot_burden(missense, AF_thres=0.01)
-run_plot_burden(missense, AF_thres=0.001)
-run_plot_burden(missense, AF_thres=0.0001)
+NFE_missense = data[data$variant_type=="missense" & !data$multi_allele,]
+run_plot_burden(NFE_missense, AF_thres=0.01)
+run_plot_burden(NFE_missense, AF_thres=0.001)
+run_plot_burden(NFE_missense, AF_thres=0.0001)
 
-missense_noMulti = data[data$variant_type=="missense" & !data$multi_allele,]
-run_plot_burden(missense_noMulti, AF_thres=0.01)
-run_plot_burden(missense_noMulti, AF_thres=0.0001)
+NFE_missense_noMulti = data[data$variant_type=="missense" & !data$multi_allele,]
+run_plot_burden(NFE_missense_noMulti, AF_thres=0.01)
+run_plot_burden(NFE_missense_noMulti, AF_thres=0.0001)
 
-FivePrimeUTR_noMulti = data[data$impact=="5_prime_UTR_variant" & !data$multi_allele,]
-run_plot_burden(FivePrimeUTR_noMulti, AF_thres=0.01)
-run_plot_burden(FivePrimeUTR_noMulti, AF_thres=0.0001)
+NFE_FivePrimeUTR_noMulti = data[data$impact=="5_prime_UTR_variant" & !data$multi_allele,]
+run_plot_burden(NFE_FivePrimeUTR_noMulti, AF_thres=0.01)
+run_plot_burden(NFE_FivePrimeUTR_noMulti, AF_thres=0.0001)
 
-ThreePrimeUTR_noMulti = data[data$impact=="3_prime_UTR_variant" & !data$multi_allele,]
-run_plot_burden(ThreePrimeUTR_noMulti, AF_thres=0.01)
-run_plot_burden(ThreePrimeUTR_noMulti, AF_thres=0.0001)
+NFE_ThreePrimeUTR_noMulti = data[data$impact=="3_prime_UTR_variant" & !data$multi_allele,]
+run_plot_burden(NFE_ThreePrimeUTR_noMulti, AF_thres=0.01)
+run_plot_burden(NFE_ThreePrimeUTR_noMulti, AF_thres=0.0001)

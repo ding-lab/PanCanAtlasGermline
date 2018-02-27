@@ -23,7 +23,8 @@ TFT = function(data){
 run_TFT = function(data, AF_thres = 0.01){
   # some clean-ups
   data = data[data$ExAC_AC/data$ExAC_AN < AF_thres,]
-  data = data[data$ExAC_AN > 114600,] # require enough samples with observed data; 114600 = first quantile
+  first_Q = summary(data$ExAC_AN)[2]
+  data = data[data$ExAC_AN > first_Q,] # require enough samples with observed data; 114600 = first quantile
   num_genes = length(unique(data$gene_symbol))
   # burden test: TFT: http://slideplayer.com/slide/8660600/
   stats = matrix(,nrow=num_genes,ncol=7)
