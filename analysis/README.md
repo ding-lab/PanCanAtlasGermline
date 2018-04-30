@@ -1,5 +1,7 @@
 Store each analyses-specific script and outputs
 ===============================================
+# Directory set-up #
+> this analyses directory should be set up to live parallelly to the TCGA_data directory to allow proper data sourcing. Due to the protected nature of some of those files they are not shared publicly. 
 
 # Dependency files #
 >global_aes_out.R: used to define plotting functions and color codes for other analysis R codes
@@ -36,3 +38,18 @@ Store each analyses-specific script and outputs
 
 ## 7. data_integration/:
 > Combine multi-level data for pathogenic variants. 
+
+## 8. hotspot3d/: 
+> Co-clustering with somatic mutations using HotSpot3D. 
+
+## 9. data_intergration/:
+> Integrate pathogenic variant data with other molecular and omics data
+> plot results from data_integration
+
+## All subsequent analysis require integrated file ##
+> source dependency_files.R to read in these additional data
+
+## 10. integrated_analysis/:
+> generate plots and stats for pathogenic variants that required integrated datap
+
+## 
