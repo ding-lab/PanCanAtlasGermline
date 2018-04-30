@@ -1,18 +1,19 @@
 ##### dependency_files.R #####
 # Kuan-lin Huang @ WashU 2017 June
+# updated 2018 to clean up paths
 # dependent files for analysis in the PCA Germline project
 
 # gene lists
-volg_fn = "/Users/khuang/Box\ Sync/PhD/proteogenomics/reference_files/Volgestin2013Science_125genes_class.txt"
+volg_fn = "../../TCGA_data/reference_files/Volgestin2013Science_125genes_class.txt"
 volg_class = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=volg_fn)
 colnames(volg_class) = c("gene_name","Gene_Classification","Pathway","Process")
 volg_TSGs = volg_class$gene_name[volg_class$Gene_Classification=="TSG"]
 volg_oncogenes = volg_class$gene_name[volg_class$Gene_Classification=="Oncogene"]
 
-onco_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/GSEA_geneLists/oncogenes.txt"
+onco_fn = "../../TCGA_data/reference_files/GSEA_geneLists/oncogenes.txt"
 oncogenes = as.vector(t(read.table(header=F, stringsAsFactors = F, file=onco_fn)))
 
-tsg_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/GSEA_geneLists/tumor_suppressors.txt"
+tsg_fn = "../../TCGA_data/reference_files/GSEA_geneLists/tumor_suppressors.txt"
 TSGs = as.vector(t(read.table(header=F, stringsAsFactors = F, file=tsg_fn)))
 
 additional_TSGs = c("MAX","SDHA","ATR","BARD1","ERCC1","FANCI","FANCL","FANCM","POLD1","POLE","POLH","RAD50","RAD51","RAD51C","RAD51D","RAD54L")
@@ -32,15 +33,15 @@ gene_fn = "/Users/khuang/Box Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/ref
 glist_f = read.table(header=FALSE, stringsAsFactors = F, file = gene_fn)
 featGenes = as.vector(t(glist_f))
 
-# get specific gene genera: fanconi; rtk; etc
-# fanc: https://humgenomics.biomedcentral.com/articles/10.1186/s40246-015-0054-y
-fanc_gene_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/human_fanc_genes.txt"
-fanc_gene_f = read.table(header=T, sep="\t", quote="", stringsAsFactors = F, file = fanc_gene_fn)
-fanc_genes = gsub("\xa0","",fanc_gene_f[,1])
-
-rtk_fn = "/Users/khuang/Box\ Sync/PhD/proteogenomics/CPTAC_pan3Cancer/pan3can_shared_data/reference_files/RTKs_list.txt"
-rtk_gene_f = read.table(header=FALSE, stringsAsFactors = F, file = rtk_fn)
-rtk_genes = as.vector(t(rtk_gene_f))
+# # get specific gene genera: fanconi; rtk; etc
+# # fanc: https://humgenomics.biomedcentral.com/articles/10.1186/s40246-015-0054-y
+# fanc_gene_fn = "/Users/khuang/Box\ Sync/PhD/germline/pan8000_germline_clinical/reference_files/human_fanc_genes.txt"
+# fanc_gene_f = read.table(header=T, sep="\t", quote="", stringsAsFactors = F, file = fanc_gene_fn)
+# fanc_genes = gsub("\xa0","",fanc_gene_f[,1])
+# 
+# rtk_fn = "/Users/khuang/Box\ Sync/PhD/proteogenomics/CPTAC_pan3Cancer/pan3can_shared_data/reference_files/RTKs_list.txt"
+# rtk_gene_f = read.table(header=FALSE, stringsAsFactors = F, file = rtk_fn)
+# rtk_genes = as.vector(t(rtk_gene_f))
 
 # ##### all_variants #####
 
@@ -62,7 +63,7 @@ rtk_genes = as.vector(t(rtk_gene_f))
 # pathVar[pathVar$bcr_patient_barcode %in% swap_samples,c(103:105,107)] = norm
 # 
 # # ### filter for filtered samples ###
-# # s_c_list_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/sampleQC/pca_table.20171118.filtered.wclin.tsv"
+# # s_c_list_f = "../../TCGA_data/sampleQC/pca_table.20171118.filtered.wclin.tsv"
 # # sample_cancer = read.table(header=T, quote = "", sep="\t", file = s_c_list_f, stringsAsFactors=FALSE)
 # # sample_cancer = sample_cancer[,c("bcr_patient_barcode", "cancer")]
 # # pathVar = pathVar[pathVar$bcr_patient_barcode %in% sample_cancer$bcr_patient_barcode,]
@@ -165,13 +166,17 @@ rtk_genes = as.vector(t(rtk_gene_f))
 # write.table(pathVar_array, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
 
 # the new pathVar is already filtered, tn_swap adjusted
-fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
+fn = "../../TCGA_data/germline/PCA_pathVar_integrated_filtered_adjusted.tsv"
 pathVar = read.table(sep="\t",header=T, quote="",stringsAsFactors = F, file=fn)
 
-# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant")] = "Unclassified LOH"
-# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres < 0 &
+# # use LOH_Classification instead, and nominate anything with tumorVAF > 0.6 but not normalVAF as suggestive
+# pathVar$LOH_classification = pathVar$LOH_Sig
+# pathVar$LOH_classification[pathVar$tumorVAF > 0.6 & pathVar$normalVAF < 0.6 & pathVar$LOH_Sig != "Significant"] = "Suggestive"
+# 
+# pathVar$AS_LOH[pathVar$LOH_classification %in% c("Suggestive","Significant")] = "Unclassified LOH"
+# pathVar$AS_LOH[pathVar$LOH_classification %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres < 0 &
 #                         pathVar$tumorVAF > pathVar$normalVAF] = "Copy Number Deletion of WT Allele"
-# pathVar$AS_LOH[pathVar$LOH_Sig %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres > 0 &
+# pathVar$AS_LOH[pathVar$LOH_classification %in% c("Suggestive","Significant") & !is.na(pathVar$CNV_thres) & pathVar$CNV_thres > 0 &
 #                         pathVar$tumorVAF > pathVar$normalVAF] = "Copy Number Amplification of Variant Allele"
 # 
 # fn = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/data_integration/out/PCA_pathVar_integrated_filtered_adjusted.tsv"
@@ -198,5 +203,5 @@ PCA_count = data.frame(table(pathVarP$HUGO_Symbol))
 colnames(PCA_count) = c("Gene","Count")
 gene_order = PCA_count$Gene[order(PCA_count$Count,decreasing = T)]
 ##### clinical files #####
-clin_f = "/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/TCGA_data/clinical/PanCan_ClinicalData_V4_wAIM_filtered10389.txt"
+clin_f = "../../TCGA_data/clinical/PanCan_ClinicalData_V4_wAIM_filtered10389.txt"
 clin = read.table(header=T, quote = "", sep="\t", fill =T, file = clin_f, stringsAsFactors=FALSE)
