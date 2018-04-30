@@ -1,27 +1,14 @@
 # PanCanAtlasGermline #
 
->The TCGA PanCanAtlas germline working group is investigating germline variants in the largest sequencing cohort of cancer to date: 10,467 cases in 33 cancer types.     
+## Pathogenic Germline Variants in 10,389 Adult Cancers ## 
+>The TCGA PanCanAtlas germline working group is investigating germline variants in the largest sequencing cohort of cancer to date: 10,389 cases in 33 cancer types.     
 
 >Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG 
 >Synapse: syn4602499  
+>Publication DOI: https://doi.org/10.1016/j.cell.2018.03.039
 
-## Meeting call-ins: ##  
-*US: 877-951-7311
-*UK: 0808-238-9817
-*Australia: 1-800-010717
-*Belgium: 0800-3-8930
-*Canada: 866-845-8494
-*Brazil: 0800-7610645
-*Italy: 800-977-455
-*Korea: 00798-14800-7797
-*Switzerland: 0800-001-427
-*Norway: 800-18093
-*Spain:  800-300-907
-*Poland: 00-800-1213476
-*Passcode: 5236367 #
-*Mute/Unmute: *6 
-*Zoom screen share: https://bcm.zoom.us/j/881727498?*pwd=lGKu4aVDTgE 
-*Password: TCGA
+# Directory set-up #
+> The analyses directory should be set up to live parallelly to the TCGA_data directory to allow proper data sourcing. Due to the protected nature of some of those files they are not shared publicly. 
 
 ## Getting started: ##  
 >1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command 
