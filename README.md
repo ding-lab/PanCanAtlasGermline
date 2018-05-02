@@ -2,12 +2,20 @@
 
 ## Pathogenic Germline Variants in 10,389 Adult Cancers ## 
 >The TCGA PanCanAtlas germline working group is investigating germline variants in the largest sequencing cohort of cancer to date: 10,389 cases in 33 cancer types.     
-
->Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG 
->Synapse: syn4602499  
 >Publication DOI: https://doi.org/10.1016/j.cell.2018.03.039
 
-# Directory set-up #
+## Data Access ##
+>De-identified variant-level data for prioritized VUS and pathogenic variants: Table S2 of the publication.
+
+>The protected variants+sample ID and the full callset (Authorized User only):
+>1) Available on ISB-CGC. The steps to get access and use the cloud resource is documented below (Getting started).
+>2) GDC link will likely be available soon. Please keep checking back here.
+
+## working group info ##
+>Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG 
+>Synapse: syn4602499  
+
+## Directory set-up ##
 > The analyses directory should be set up to live parallelly to the TCGA_data directory to allow proper data sourcing. Due to the protected nature of some of those files they are not shared publicly. 
 
 ## Getting started: ##  
