@@ -15,8 +15,7 @@ PMID: 29625052
 >De-identified variant-level data for prioritized VUS and pathogenic variants: Table S2 of the publication.
 
 >The protected variants+sample ID and the full callset (Authorized User only):
->1) Available on ISB-CGC (Cancer Genome Cloud). The steps to get access and use the cloud resource is documented below (Getting started).
->2) GDC link will likely be available soon. Please keep checking back here.
+>GDC link will likely be available soon. Please keep checking back here.
 
 ## PanCanAtlas Germline Working Group info (for members) ##
 >Wiki: https://wiki.nci.nih.gov/display/TCGAM/PanCanAtlas+Germline+AWG 
@@ -26,7 +25,7 @@ PMID: 29625052
 > The analyses directory should be set up to live parallelly to the TCGA_data directory to allow proper data sourcing. Due to the protected nature of some of those files they are not shared publicly. 
 > Analyses scripts are in the "analysis" folder
 
-## Getting started on ISB-CGC: ##  
+## Getting started on ISB-CGC [For TCGA PanCanAtlas Germline AWG members Only]: ##  
 >1) Install Google Cloud SDK (https://cloud.google.com/sdk/docs/quickstarts) and read through at least the basic gsutil command 
 >2) Make sure you can access the project on Google cloud (https://console.cloud.google.com/home/dashboard?project=isb-cgc-06-0004); if not here are some relevant steps (http://isb-cancer-genomics-cloud.readthedocs.io/en/latest/sections/webapp/Gaining-Access-To-Contolled-Access-Data.html)  
 >3) Read this one page quick start to google cloud compute engine (https://cloud.google.com/compute/docs/quickstarts) . 
