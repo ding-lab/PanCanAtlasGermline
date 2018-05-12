@@ -15,9 +15,13 @@ PMID: 29625052
 >De-identified variant-level data for prioritized VUS and pathogenic variants: Table S2 of the publication.
 
 >The protected variants+sample ID and the full callset (Authorized User only):
+
 >GDC link: https://gdc.cancer.gov/about-data/publications/PanCanAtlas-Germline-AWG
+
 >Compressed VCF file of the combined, filtered variant calls using GATK, VarScan2, and Pindel on WES data of the 10,389 final passed-QC samples. - PCA.r1.TCGAbarcode.merge.tnSwapCorrected.10389.vcf.gz
+
 >Tabix file of the compressed VCF file of the combined, filtered variant calls using GATK, VarScan2, and Pindel on WES data of the 10,389 final passed-QC samples. - PCA.r1.TCGAbarcode.merge.tnSwapCorrected.10389.vcf.gz.tbi
+
 >Prioritized, cancer related variants discovered in 10,389 cases. Please use "Overall_Classification" column to distinguish between Pathogenic, Likely Pathogenic and Priortizied VUSs. - PCA_pathVar_integrated_filtered_adjusted.tsv
 
 ## PanCanAtlas Germline Working Group info (for members) ##
