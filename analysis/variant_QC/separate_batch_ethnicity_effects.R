@@ -1,7 +1,7 @@
 ##### separate_batch_ethnicity_effects.R #####
 # Kuan-lin Huang @ WashU 2017 Aug./ updated Nov.
 
-#setwd("/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/variant_QC/")
+setwd("/Users/khuang/Box\ Sync/PhD/germline/PanCanAtlasGermline/analysis/variant_QC/")
 source("../global_aes_out.R")
 source("../dependency_files.R")
 
@@ -75,7 +75,7 @@ istat_clin_coverage_pathCount = merge(istat_clin_coverage_pathCount,istat_21, by
 colnames(istat_clin_coverage_pathCount)[which(colnames(istat_clin_coverage_pathCount)=="consensus_call")] = "Ancestry"
 colnames(istat_clin_coverage_pathCount)[which(colnames(istat_clin_coverage_pathCount)=="type")] = "Cancer"
 istat_clin_coverage_pathCount$pathVarCount[is.na(istat_clin_coverage_pathCount$pathVarCount)]=0
-# istat_clin_coverage_pathCount_brief = istat_clin_coverage_pathCount[,c(1:20,55:58)]
+# istat_clin_coverage_pathCount_brief = istat_clin_coverage_pathCount[,c(1:5,158:180,216:252)]
 # fn = "out/10389_data_for_batch_effect_analysis.tsv"
 # write.table(istat_clin_coverage_pathCount_brief, file=fn, quote=F, sep="\t", col.names=T, row.names=F)
 
