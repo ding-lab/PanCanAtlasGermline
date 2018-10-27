@@ -85,7 +85,7 @@ cat("Average number of variants in Exons: ", mean(istat_clin_coverage_pathCount$
 for (eth in unique(istat_clin_coverage_pathCount$Ancestry)){
   cat("Average number of variants in Exons (", eth,"): ", mean(istat_clin_coverage_pathCount$NVAR[!is.na(istat_clin_coverage_pathCount$Ancestry) & istat_clin_coverage_pathCount$Ancestry==eth]),"\n")
 }
-mean(istat_clin_coverage_pathCount_eur$TITV,na.rm=T)
+# mean(istat_clin_coverage_pathCount_eur$TITV,na.rm=T)
 
 ### implement LMG (1980) to identify the independent contribution from regressions
 # coverage
@@ -378,6 +378,51 @@ p = p + theme(axis.title = element_text(size=12), axis.text.y = element_text(siz
 p = p + expand_limits(y=0)
 p
 fn = 'out/PCA10389.titv.by.center.sixC.pdf'
+ggsave(file=fn, h=3,w = 4, useDingbats=FALSE,limitsize=FALSE)
+
+### the six cancer version
+# all exome
+p = ggplot(data=istat_clin_coverage_pathCount_sixc[!is.na(istat_clin_coverage_pathCount_sixc$Ancestry) & istat_clin_coverage_pathCount_sixc$Ancestry == "eur",],aes(x = Center, y=NVAR))
+p = p + facet_grid(.~Cancer, drop = T, space = "free_x" , scale= "free_x")
+p = p + geom_violin(alpha=0.8, aes(fill = Center))
+p = p + stat_summary(fun.y = mean, fun.ymin = mean, fun.ymax = mean,
+                     geom = "crossbar", width = 0.8)
+p = p + theme_nogrid() + theme(legend.position="none")
+p = p + labs(x = "Center", y = "Count of variants in CDS")
+p = p + theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10), axis.text.x = element_text(colour="black", size=8, angle = 90, vjust = 0.5))
+p = p + theme(legend.position = "bottom")
+p = p + expand_limits(y=0) 
+p
+fn = 'out/PCA10389.eurExomeVarCount.by.center.sixc.pdf'
+ggsave(file=fn, h=3,w = 4, useDingbats=FALSE,limitsize=FALSE)
+
+# 152 genes
+p = ggplot(data=istat_clin_coverage_pathCount_sixc[!is.na(istat_clin_coverage_pathCount_sixc$Ancestry) & istat_clin_coverage_pathCount_sixc$Ancestry == "eur",],aes(x = Center, y=Predispose152Genes_NVAR))
+p = p + facet_grid(.~Cancer, drop = T, space = "free_x" , scale= "free_x")
+p = p + geom_violin(alpha=0.8, aes(fill = Center))
+p = p + stat_summary(fun.y = mean, fun.ymin = mean, fun.ymax = mean,
+                     geom = "crossbar", width = 0.8)
+p = p + theme_nogrid() + theme(legend.position="none")
+p = p + labs(x = "Center", y = "Count of variants in 152 genes")
+p = p + theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10), axis.text.x = element_text(colour="black", size=8, angle = 90, vjust = 0.5))
+p = p + theme(legend.position = "bottom")
+p = p + expand_limits(y=0) 
+p
+fn = 'out/PCA10389.eur152geneVarCount.by.center.sixc.pdf'
+ggsave(file=fn, h=3,w = 4, useDingbats=FALSE,limitsize=FALSE)
+
+p = ggplot(data=istat_clin_coverage_pathCount_sixc[!is.na(istat_clin_coverage_pathCount_sixc$Ancestry) & istat_clin_coverage_pathCount_sixc$Ancestry == "eur",],aes(x = Center, y=Predispose21Genes_NVAR))
+p = p + facet_grid(.~Cancer, drop = T, space = "free_x" , scale= "free_x")
+p = p + geom_violin(alpha=0.8, aes(fill = Center))
+p = p + stat_summary(fun.y = mean, fun.ymin = mean, fun.ymax = mean,
+                     geom = "crossbar", width = 0.8)
+p = p + theme_nogrid() + theme(legend.position="none")
+p = p + labs(x = "Center", y = "Count of variants in 21 genes")
+p = p + theme(axis.title = element_text(size=12), axis.text.y = element_text(size=10), axis.text.x = element_text(colour="black", size=8, angle = 90, vjust = 0.5))
+p = p + theme(legend.position = "bottom")
+p = p + expand_limits(y=0)
+p
+fn = 'out/PCA10389.eur21geneVarCount.by.center.sixc.pdf'
 ggsave(file=fn, h=3,w = 4, useDingbats=FALSE,limitsize=FALSE)
 
 ### stats
